@@ -15,10 +15,10 @@ module.exports = {
         user_email: Joi.string().required().label('Email'),
         // user_role: Joi.string().required().label('Role'),
         user_password: Joi.string().min(6).required().label('Password'),
-        confirm_password: Joi.string()
-            .valid(Joi.ref('user_password'))
-            .required()
-            .error(new Error('Confirm password and password must be same')),
+        /* confirm_password: Joi.string()
+             .valid(Joi.ref('user_password'))
+             .required()
+             .error(new Error('Confirm password and password must be same')),*/
     }),
     socialLogin: Joi.object().keys({
         type: Joi.string().valid('google', 'facebook').required().label('type'),
