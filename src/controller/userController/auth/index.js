@@ -103,6 +103,7 @@ module.exports = {
                 user_id: getUser[0]._id,
                 user_name: getUser[0].user_name,
                 user_email: getUser[0].user_email,
+                email_verify: getUser[0].user_email_verified,
                 token: token
             }
             responseData.msg = `Welcome ${getUser[0].user_name} !!!`;
@@ -124,21 +125,75 @@ module.exports = {
         let responseData = {};
         console.log(reqObj);
         try {
-            let checkQuery = {
-                $or: [
-                    { user_email: reqObj.user_email },
-                    { user_name: reqObj.user_name },
-                    { phone_number: reqObj.phone_number }
-                ]
-            }
-            let checkEmail = await userDbHandler.getUserDetailsByQuery(checkQuery);
+            // let checkQuery = {
+            //     $or: [
+            //         { user_email: reqObj.user_email },
+            //         { user_name: reqObj.user_name },
+            //         { phone_number: reqObj.phone_number }
+            //     ]
+            // }
+            let checkEmail = await userDbHandler.getUserDetailsByQuery({user_email: reqObj.user_email});
+            let checkPhoneNumber = await userDbHandler.getUserDetailsByQuery({ phone_number: reqObj.phone_number });
+            let checkUsername = await userDbHandler.getUserDetailsByQuery({ user_name: reqObj.user_name });
             if (checkEmail.length) {
-                responseData.msg = 'Email Or User Name Or Phone Number Already Exist !!!';
+                responseData.msg = 'Email Already Exist !!!';
                 return responseHelper.error(res, responseData);
             }
-            let saveData = await userDbHandler.createUser(reqObj);
-            responseData.msg = "Data Saved Successfully!!!";
-            return responseHelper.success(res, responseData);
+            if (checkPhoneNumber.length) {
+                responseData.msg = 'Phone Number Already Exist !!!';
+                return responseHelper.error(res, responseData);
+            }
+            if (checkUsername.length) {
+                responseData.msg = 'User Name Already Exist !!!';
+                return responseHelper.error(res, responseData);
+            }
+            let submitData = {
+                user_name:reqObj.user_name,
+                first_name: reqObj.first_name,
+                last_name: reqObj.last_name,
+                user_email: reqObj.user_email,
+                phone_number: reqObj.phone_number,
+                user_password:reqObj.user_password,
+            }
+            let newUser = await userDbHandler.createUser(submitData);
+            log.info('User created in the database collection',newUser);
+            //patch token data obj
+            let tokenData = {
+                user_email : newUser.user_email,
+                name: newUser.user_name
+            };
+            let verificationType = 'email';
+            //generate email verification token
+            let emailVerificationToken = _generateVerificationToken(tokenData,verificationType);
+            //send verification email after user successfully created
+            //patch email verification templateBody
+            let templateBody = {
+                type: verificationType,
+                token: emailVerificationToken,
+                name: newUser.user_name
+            };
+            let emailBody = {
+                recipientsAddress: newUser.user_email,
+                subject: 'A link to verify your email',
+                body: templates.emailVerification(templateBody)
+            };
+            let emailInfo = await emailService.sendEmail(emailBody);
+            if(emailInfo) {
+                log.info('email verification mail sent successfully',emailInfo);
+                let emailObj = {
+                    token : emailVerificationToken,
+                    user_id : newUser._id,
+                    verification_type: verificationType
+                };
+                let newEmailVerification = await verificationDbHandler.createVerification(emailObj);
+                log.info('new email verification entry created successfully in the database',newEmailVerification);
+                responseData.msg = 'your account has been created successfully! Please verify your email. Verification link has been sent on your registered email Id';
+                // responseData.data = {token:mobileverificationtoken, type:'mobile'};
+                return responseHelper.success(res,responseData);
+            }
+            // let saveData = await userDbHandler.createUser(reqObj);
+            // responseData.msg = "Data Saved Successfully!!!";
+            // return responseHelper.success(res, responseData);
         } catch (error) {
             log.error('failed to get user signup with error::', error);
             responseData.msg = 'failed to create user';
