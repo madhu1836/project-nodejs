@@ -26,7 +26,7 @@ module.exports = {
     }),
     forgotPassword: Joi.object().keys({
         user_email: Joi.string().email().required().label('Email'),
-        app_type: Joi.string().required().label('App type'),
+        // app_type: Joi.string().required().label('App type'),
     }),
     forgotPasswordMobile: Joi.object().keys({
         phone_number: Joi.number().min(10).required().label('Mobile Number'),

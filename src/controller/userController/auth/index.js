@@ -384,9 +384,9 @@ module.exports = {
                 subject: 'A link to change you password',
                 body: templates.passwordReset(templateBody)
             };
-            let emailInfo = await emailService.sendEmail(emailBody);
-            if (emailInfo && !isVerificationDataExists) {
-                log.info('password reset mail sent successfully', emailInfo);
+            // let emailInfo = await emailService.sendEmail(emailBody);
+            if (!isVerificationDataExists) {
+                // log.info('password reset mail sent successfully', emailInfo);
                 let passwordResetObj = {
                     token: passwordResetToken,
                     user_id: userData[0]._id,
@@ -395,7 +395,8 @@ module.exports = {
                 let newPasswordVerification = await verificationDbHandler.createVerification(passwordResetObj);
                 log.info('new forgot password entry created successfully in the database', newPasswordVerification);
             }
-            responseData.msg = 'password reset link has been sent successfully! Please check your registered email inbox';
+            responseData.msg = 'Email validated';
+            responseData.data = templateBody;
             return responseHelper.success(res, responseData);
         } catch (error) {
             log.error('failed to process forget password request with error::', error);
@@ -548,7 +549,7 @@ module.exports = {
     resetPassword: async(req, res) => {
         let reqBody = req.body;
         let resetPasswordToken = req.passwordResetToken;
-        log.info('Recieved request for password reset:', resetPasswordToken, reqBody);
+        log.info('Recieved request for password reset====>:', resetPasswordToken, reqBody);
         let newPassword = reqBody.new_password;
         let responseData = {};
         try {
@@ -557,6 +558,7 @@ module.exports = {
                 verification_type: 'password'
             };
             let passwordTokenInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
+            log.info("tokenInfo", passwordTokenInfo);
             let userId = passwordTokenInfo[0].user_id;
             let userDetail = await userDbHandler.getUserDetailsById(userId);
             let comparePassword = await _comparePassword(newPassword, userDetail.user_password);
@@ -569,35 +571,6 @@ module.exports = {
             if (!passwordTokenInfo.length) {
                 log.error('Invalid password reset token:', resetPasswordToken);
                 responseData.msg = 'Invalid Password reset request or token expired';
-                return responseHelper.error(res, responseData);
-            }
-            let engupregex = new RegExp("(?=.*?[A-Z])");
-            let englowregex = new RegExp("(?=.*?[a-z])");
-            let numericregex = new RegExp("(?=.*?[0-9])");
-            let specialregex = new RegExp("(?=.*?[#?!@$%^&*-])");
-            let minlengthregex = new RegExp(".{6,}");
-            if (!engupregex.test(newPassword)) {
-                responseData.msg = 'Password must have at least one special character';
-                return responseHelper.error(res, responseData);
-            }
-
-            if (!englowregex.test(newPassword)) {
-                responseData.msg = 'Password must have at least one lowercase letters';
-                return responseHelper.error(res, responseData);
-            }
-
-            if (!numericregex.test(newPassword)) {
-                responseData.msg = 'Password must have at least one numeric letters';
-                return responseHelper.error(res, responseData);
-            }
-
-            if (!specialregex.test(newPassword)) {
-                responseData.msg = 'Password must have at least one special letters';
-                return responseHelper.error(res, responseData);
-            }
-
-            if (!minlengthregex.test(newPassword)) {
-                responseData.msg = 'Password must be minimum six character';
                 return responseHelper.error(res, responseData);
             }
 

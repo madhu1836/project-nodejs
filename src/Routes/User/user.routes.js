@@ -18,7 +18,6 @@ module.exports = () => {
         userAuthController.login
     );
 
-    // Router.post('/driver/login', validationMiddleware(userValidationSchema.login, 'body'), userDriverController.driver_login);
     Router.post(
         '/user/signup',
         validationMiddleware(userValidationSchema.signup, 'body'),
@@ -30,17 +29,17 @@ module.exports = () => {
         userAuthController.forgotPassword
     );
     Router.post(
-        '/user/forgot/passwordMobile',
-        validationMiddleware(userValidationSchema.forgotPasswordMobile, 'body'),
-        userAuthController.forgotPasswordMobile
-    );
-    Router.post(
         '/user/reset/password', [
             verificationAuthenticated,
             validationMiddleware(userValidationSchema.resetPassword, 'body'),
         ],
         userAuthController.resetPassword
     );
+    // Router.post(
+    //     '/user/forgot/passwordMobile',
+    //     validationMiddleware(userValidationSchema.forgotPasswordMobile, 'body'),
+    //     userAuthController.forgotPasswordMobile
+    // );
 
 
     /**
@@ -77,25 +76,25 @@ module.exports = () => {
     /**
      * Mobile verification Route
      * */
-    Router.post(
-        '/reg/mobile/u/verification',
-        validationMiddleware(userValidationSchema.verifyPhone, 'body'),
-        userAuthController.mobileverify
-    );
+    // Router.post(
+    //     '/reg/mobile/u/verification',
+    //     validationMiddleware(userValidationSchema.verifyPhone, 'body'),
+    //     userAuthController.mobileverify
+    // );
 
-    Router.post(
-        '/reg/mobile/u/verification-password',
-        validationMiddleware(userValidationSchema.verifyPhone, 'body'),
-        userAuthController.verifyOtpForPassword
-    );
+    // Router.post(
+    //     '/reg/mobile/u/verification-password',
+    //     validationMiddleware(userValidationSchema.verifyPhone, 'body'),
+    //     userAuthController.verifyOtpForPassword
+    // );
 
     /**
      * Mobile verification Route
      * */
-    Router.post(
-        '/resend/mobile/verification',
-        userAuthController.resendOtp
-    );
+    // Router.post(
+    //     '/resend/mobile/verification',
+    //     userAuthController.resendOtp
+    // );
 
     /****************************
      * END OF UNAUTHORIZED ROUTES
