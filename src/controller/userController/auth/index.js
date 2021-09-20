@@ -558,21 +558,22 @@ module.exports = {
                 verification_type: 'password'
             };
             let passwordTokenInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
-            log.info("tokenInfo", passwordTokenInfo);
-            let userId = passwordTokenInfo[0].user_id;
-            let userDetail = await userDbHandler.getUserDetailsById(userId);
-            let comparePassword = await _comparePassword(newPassword, userDetail.user_password);
-            console.log(comparePassword);
-            if (comparePassword) {
-                log.error('Use old password:', newPassword);
-                responseData.msg = 'new password can not be same as old password';
-                return responseHelper.error(res, responseData);
-            }
             if (!passwordTokenInfo.length) {
                 log.error('Invalid password reset token:', resetPasswordToken);
                 responseData.msg = 'Invalid Password reset request or token expired';
                 return responseHelper.error(res, responseData);
             }
+            log.info("tokenInfo", passwordTokenInfo);
+            let userId = passwordTokenInfo[0].user_id;
+            let userDetail = await userDbHandler.getUserDetailsById(userId);
+            let comparePassword = await _comparePassword(newPassword, userDetail.user_password);
+            console.log("compare_password===>",comparePassword);
+            if (comparePassword) {
+                log.error('Use old password:', newPassword);
+                responseData.msg = 'new password can not be same as old password';
+                return responseHelper.error(res, responseData);
+            }
+            
 
             let encryptedPassword = await _encryptPassword(newPassword);
             let updateUserQuery = {
