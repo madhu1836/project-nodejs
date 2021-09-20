@@ -33,6 +33,8 @@ module.exports = {
         app_type: Joi.string().required().label('App type')
     }),
     resetPassword: Joi.object().keys({
+        token: Joi.string().trim().required().label('token'),
+        type: Joi.string().trim().required().label('type'),
         new_password: Joi.string().min(6).required().label('Password'),
         confirm_password: Joi.string()
             .valid(Joi.ref('new_password'))

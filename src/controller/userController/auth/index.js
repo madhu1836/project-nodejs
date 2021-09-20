@@ -548,7 +548,7 @@ module.exports = {
     },
     resetPassword: async(req, res) => {
         let reqBody = req.body;
-        let resetPasswordToken = req.passwordResetToken;
+        let resetPasswordToken = reqBody.token;
         log.info('Recieved request for password reset====>:', resetPasswordToken, reqBody);
         let newPassword = reqBody.new_password;
         let responseData = {};

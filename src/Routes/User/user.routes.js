@@ -30,7 +30,6 @@ module.exports = () => {
     );
     Router.post(
         '/user/reset/password', [
-            verificationAuthenticated,
             validationMiddleware(userValidationSchema.resetPassword, 'body'),
         ],
         userAuthController.resetPassword
