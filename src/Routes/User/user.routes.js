@@ -120,6 +120,11 @@ module.exports = () => {
      */
     Router.get('/user/profile', userInfoController.profile);
     Router.put('/user/update_profile', [multerService.uploadFile('file').single('user_avatar'), validationMiddleware(userInfoValidationSchema.updateProfile, 'body')], userInfoController.updateProfile);
+    
+    /**
+     * Routes for handle change password
+     */
+    Router.put('/user/change_password', validationMiddleware(userInfoValidationSchema.changePassword, 'body'), userInfoController.changePassword);
 
     /**************************
      * END OF AUTHORIZED ROUTES

@@ -70,7 +70,7 @@ let _encryptPassword = (password) => {
  **************************/
 module.exports = {
     /**
-     * Get User Profilr
+     * Method to get User Profilr
      */
     profile: async(req, res) => {
         let user = req.user;
@@ -91,7 +91,7 @@ module.exports = {
     },
 
     /**
-     * Update Profile
+     *  Method to update Profile
      */
      updateProfile: async(req, res) => {
         let reqObj = req.body; 
@@ -136,6 +136,41 @@ module.exports = {
         } catch (error) {
             log.error('failed to get user signup with error::', error);
             responseData.msg = 'failed to get user login';
+            return responseHelper.error(res, responseData);
+        }
+    },
+
+    /**
+     * Method to handle change password
+     */
+    changePassword: async(req, res) => {
+        let reqObj = req.body; 
+        let user = req.user;
+        let id = user.sub;
+        log.info('Recieved request for User Profile update:', reqObj);
+        let responseData = {};
+        try {
+            let userData = await userDbHandler.getUserDetailsById(id);
+            let comparePassword = await _comparePassword(reqObj.old_password, userData.user_password);
+            if (!comparePassword) {
+                responseData.msg = `Invalid old password !!!`;
+                return responseHelper.error(res, responseData);
+            }
+            let compareNewAndOld = await _comparePassword(reqObj.new_password, userData.user_password);
+            if (compareNewAndOld) {
+                responseData.msg = `New password must be different from old password !!!`;
+                return responseHelper.error(res, responseData);
+            }
+            let updatedObj = {
+                user_password: await _encryptPassword(reqObj.new_password)
+            }
+            let updateProfile = await userDbHandler.updateUserDetailsById(id, updatedObj);
+            responseData.msg = `Data updated sucessfully !!!`;
+            return responseHelper.success(res, responseData);
+
+        } catch (error) {
+            log.error('failed to update with error::', error);
+            responseData.msg = 'failed to update data';
             return responseHelper.error(res, responseData);
         }
     }
