@@ -88,7 +88,8 @@ module.exports = {
                 responseData.msg = "Email Not found!!!";
                 return responseHelper.error(res, responseData);
             }
-            let checkPassword = _comparePassword(reqObj.user_password, getUser[0].user_password);
+            let checkPassword = await _comparePassword(reqObj.user_password, getUser[0].user_password);
+            console.log();
             if (!checkPassword) {
                 responseData.msg = "Incurrect Password!!!";
                 return responseHelper.error(res, responseData);
