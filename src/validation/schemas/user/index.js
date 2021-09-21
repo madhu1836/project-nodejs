@@ -9,38 +9,11 @@ const number_validation = /^[0-9]*$/;
 const float_number_validation = /^[0-9.]*$/;
 module.exports = {
   updateProfile: Joi.object().keys({
-    user_name: Joi.string().trim().min(3).label("Name").optional(),
-    phone_number: Joi.string().min(0).optional().allow(null),
-    bank_details: Joi.object().keys({
-      bank_name: Joi.string().label("Bank name").allow(null),
-      account_number: Joi.number()
-        .positive()
-        .label("Account Number")
-        .allow(null),
-      ifsc_code: Joi.string().alphanum().label("Ifsc Code").allow(null),
-      swift_code: Joi.string().alphanum().allow(null).label("Swift Code"),
-    }),
-    social_link: Joi.object()
-      .keys({
-        facebook: Joi.string()
-          .uri({ allowQuerySquareBrackets: true })
-          .optional()
-          .label("Facebook")
-          .allow(null),
-        instagram: Joi.string()
-          .uri({ allowQuerySquareBrackets: true })
-          .optional()
-          .label("Instagram")
-          .allow(null),
-      })
-      .or("facebook", "instagram"),
-    user_email: Joi.string().email().optional().allow("").label("Email"),
-    user_bio: Joi.string().optional().allow("").label("biography"),
-    InterestArtsFeild: Joi.array()
-      .optional()
-      .allow("")
-      .label("Interested Arts Feilds"),
-    hireRate: Joi.number().optional().allow("").label("hire Rate"),
+    first_name: Joi.string().trim().min(3).required().label("First Name"),
+    last_name: Joi.string().trim().min(3).required().label("Last Name"),
+    user_name: Joi.string().trim().min(3).required().label("User Name"),
+    phone_number: Joi.string().min(10).required().label("Phone Number"),
+    user_bio: Joi.string().optional().allow("").label("User Bio"),
   }),
   completeBasic: Joi.object().keys({
     dob: Joi.string().required().label("Date of birth"),

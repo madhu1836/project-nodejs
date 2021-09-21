@@ -1,10 +1,18 @@
 const Router = require('express').Router();
+/**
+ * All Controllers
+ */
 const userAuthController = require('../../controller').userAuth;
+const userInfoController = require('../../controller').userInfo;
+/**
+ * All Middlewares
+ */
 const userAuthenticated = require('../../services/middleware/userAuthenticate');
 const verificationAuthenticated = require('../../services/middleware/verification');
 const userValidationSchema = require('../../validation').authSchema;
+const userInfoValidationSchema = require('../../validation').userInfoSchema;
 const validationMiddleware = require('../../utils/validationMiddleware');
-// const multerService = require('../../services/multer');
+const multerService = require('../../services/multer');
 module.exports = () => {
     /***************************
      * START UNAUTHORIZED ROUTES
@@ -107,7 +115,11 @@ module.exports = () => {
      */
     Router.use('/', userAuthenticated);
 
-    // Router.get('/driver-profile', userDriverController.get_driver);
+    /**
+     * Routes for handling user profile
+     */
+    Router.get('/user/profile', userInfoController.profile);
+    Router.put('/user/update_profile', [multerService.uploadFile('file').single('user_avatar'), validationMiddleware(userInfoValidationSchema.updateProfile, 'body')], userInfoController.updateProfile);
 
     /**************************
      * END OF AUTHORIZED ROUTES

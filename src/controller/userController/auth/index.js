@@ -85,13 +85,13 @@ module.exports = {
             }
             let getUser = await userDbHandler.getUserDetailsByQuery(query);
             if (!getUser.length) {
-                responseData.msg = "Email Not found!!!";
+                responseData.msg = "Invalid Credentials!!!";
                 return responseHelper.error(res, responseData);
             }
             let checkPassword = await _comparePassword(reqObj.user_password, getUser[0].user_password);
             console.log();
             if (!checkPassword) {
-                responseData.msg = "Incurrect Password!!!";
+                responseData.msg = "Invalid Credentials!!!";
                 return responseHelper.error(res, responseData);
             }
             let tokenData = {
