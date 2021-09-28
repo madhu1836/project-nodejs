@@ -21,8 +21,13 @@ module.exports = {
              .error(new Error('Confirm password and password must be same')),*/
     }),
     socialLogin: Joi.object().keys({
-        type: Joi.string().valid('google', 'facebook').required().label('type'),
+        type: Joi.string().valid('google', 'facebook', 'apple').required().label('type'),
         access_token: Joi.string().required().label('token'),
+        device_type: Joi.string().required().label('Device Type'),
+        device_token: Joi.string().required().label('Device Token'),
+        first_name: Joi.string().allow("").optional().label('First Name'),
+        last_name: Joi.string().allow("").optional().label('Last Name'),
+        user_email: Joi.string().allow("").optional().label('User Email')
     }),
     forgotPassword: Joi.object().keys({
         user_email: Joi.string().email().required().label('Email'),

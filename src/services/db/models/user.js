@@ -20,7 +20,16 @@ const userSchema = new Schema({
         type: String,
         trim: true,
     },
-    fcm_token: {
+    device_token: {
+        type: String,
+        default: ''
+    },
+    device_type:{
+        type: String,
+        default: '1',
+        enum: ['1', '2']
+    },
+    access_token: {
         type: String,
         default: ''
     },
@@ -48,7 +57,7 @@ const userSchema = new Schema({
     },
     login_way: {
         type: String,
-        enum: ['local', 'facebook', 'google'],
+        enum: ['local', 'facebook', 'google', 'apple'],
         default: 'local',
     },
     user_avatar: {

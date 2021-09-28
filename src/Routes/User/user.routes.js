@@ -59,7 +59,7 @@ module.exports = () => {
      * Social Login
      */
     Router.post(
-        '/auth/social/login',
+        '/user/social/login',
         validationMiddleware(userValidationSchema.socialLogin, 'body'),
         userAuthController.socialLogin
     );

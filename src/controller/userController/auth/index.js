@@ -205,128 +205,219 @@ module.exports = {
      * Method to handle social login
      */
     socialLogin: async(req, res) => {
-        let reqBody = req.body;
+        let reqObj = req.body;
         log.info('Recieved request for User social login:', reqBody);
-        let type = reqBody.type;
-        let accessToken = reqBody.access_token;
+        let type = reqObj.type;
+        let accessToken = reqObj.access_token;
         let responseData = {};
         try {
-            if (type === 'facebook') {
-                const facebookUser = await socialLoginService.facebook(accessToken);
-                if (!Object.keys(facebookUser).length) {
-                    log.error('failed to authenticate user for facebook login::', facebookUser);
-                    responseData.msg = 'failed to authenticate login token';
-                    return responseHelper.error(res, responseData);
-                }
-                log.info('user authenticated for facebook login::', facebookUser);
                 let query = {
-                    user_email: facebookUser.email,
-                    facebook_id: facebookUser.id,
-                    login_way: 'facebook'
+                    access_token: accessToken,
+                    login_way: type
                 };
                 let userData = await userDbHandler.getUserDetailsByQuery(query);
                 if (userData.length) {
-                    //user already present in the database, return the jwt token
-                    //patch token data obj
                     let tokenData = {
-                        user_name: userData[0].user_name,
                         sub: userData[0]._id,
-                        user_email: userData[0].user_email
+                        user_email: userData[0].user_email,
+                        user_name: userData[0].user_name
                     };
-                    //generate jwt token with the token obj
-                    let jwtToken = _generateUserToken(tokenData);
-                    log.info('User facebook login found', userData);
-                    //update the response Data
-                    responseData.msg = `Welcome ${userData[0].user_name}`;
-                    responseData.data = { authToken: jwtToken, user_verified: userData[0].user_verified, user_email: userData[0].user_email, user_avatar: userData[0].user_avatar };
+                    let token = _generateUserToken(tokenData);
+                    let returnResponse = {
+                        user_id: userData[0]._id,
+                        user_name: userData[0].user_name,
+                        user_email: userData[0].user_email,
+                        email_verify: userData[0].user_email_verified,
+                        token: token
+                    }
+                    userData[0].device_token = reqObj.device_token;
+                    await userData[0].save();
+                    responseData.msg = `Welcome ${userData[0].user_name} !!!`;
+                    responseData.data = returnResponse;
                     return responseHelper.success(res, responseData);
                 }
-                //create a new user in the db
-                let newUserObj = {
-                    user_name: facebookUser.name,
-                    user_email: facebookUser.email,
-                    user_password: facebookUser.id,
-                    user_verified: facebookUser.email_verified,
-                    facebook_id: facebookUser.id,
-                    login_way: 'facebook'
-                };
-                let newUser = await userDbHandler.createUser(newUserObj);
-                log.info('new user entry created in the database::', newUser);
-                //create a new jwt token and return
-                //patch token data obj
-                let tokenData = {
-                    user_name: newUser.user_name,
-                    sub: newUser._id,
-                    user_email: newUser.user_email
-                };
-                //generate jwt token with the token obj
-                let jwtToken = _generateUserToken(tokenData);
-                //update the response Data
-                responseData.msg = `Welcome ${newUser.user_name}`;
-                responseData.data = { authToken: jwtToken, user_verified: newUser.user_verified, user_email: newUser.user_email, user_avatar: newUser.user_avatar };
-                return responseHelper.success(res, responseData);
-            }
-            if (type === 'google') {
-                const googleUser = await socialLoginService.google(accessToken);
-                if (!Object.keys(googleUser).length) {
-                    log.error('failed to authenticate user for google login::', googleUser);
-                    responseData.msg = 'failed to authenticate user login';
-                    return responseHelper.error(res, responseData);
-                }
-                log.info('user authenticated for google login::', googleUser);
-                let query = {
-                    user_email: googleUser.email,
-                    google_id: googleUser.id,
-                    login_way: 'google'
-                };
-                let userData = await userDbHandler.getUserDetailsByQuery(query);
-                if (userData.length) {
-                    //user already present in the database, return the jwt token
-                    //patch token data obj
-                    let tokenData = {
-                        user_name: userData[0].user_name,
-                        sub: userData[0]._id,
-                        user_email: userData[0].user_email
+                let checkEmail = await userDbHandler.getUserDetailsByQuery({user_email: reqObj.user_email});
+                if (checkEmail.length) {
+                    let updateObj = {
+                        access_token: accessToken,
+                        login_way: type,
+                        device_type: device_type,
+                        device_token: reqObj.device_token
                     };
-                    //generate jwt token with the token obj
-                    let jwtToken = _generateUserToken(tokenData);
-                    log.info('User google login found', userData);
-                    //update the response Data
-                    responseData.msg = `Welcome ${userData[0].user_name}`;
-                    responseData.data = { authToken: jwtToken, user_verified: userData[0].user_verified, user_email: userData[0].user_email, user_avatar: userData[0].user_avatar };
+                    await userDbHandler.updateUserDetailsById(checkEmail[0], updateObj);
+                    let tokenData = {
+                        sub: checkEmail[0]._id,
+                        user_email: checkEmail[0].user_email,
+                        user_name: checkEmail[0].user_name
+                    };
+                    let token = _generateUserToken(tokenData);
+                    let returnResponse = {
+                        user_id: checkEmail[0]._id,
+                        user_name: checkEmail[0].user_name,
+                        user_email: checkEmail[0].user_email,
+                        email_verify: checkEmail[0].user_email_verified,
+                        token: token
+                    }
+                    responseData.msg = `Welcome ${checkEmail[0].user_name} !!!`;
+                    responseData.data = returnResponse;
                     return responseHelper.success(res, responseData);
                 }
-                //create a new user in the db
-                let newUserObj = {
-                    user_name: googleUser.name,
-                    user_email: googleUser.email,
-                    user_password: googleUser.id,
-                    user_verified: googleUser.email_verified,
-                    google_id: googleUser.id,
-                    login_way: 'google'
+                let saveResponse = {
+                    access_token: accessToken,
+                    login_way: type,
+                    device_type: device_type,
+                    device_token: reqObj.device_token,
+                    first_name: reqObj.first_name,
+                    last_name: reqObj.last_name,
+                    user_email: reqObj.user_email,
                 };
-                let newUser = await userDbHandler.createUser(newUserObj);
-                log.info('new user entry created in the database::', newUser);
-                //create a new jwt token and return
-                //patch token data obj
+                let newUser = await userDbHandler.createUser(saveResponse);
+
                 let tokenData = {
-                    user_name: newUser.user_name,
                     sub: newUser._id,
-                    user_email: newUser.user_email
+                    user_email: newUser.user_email,
+                    user_name: newUser.user_name
                 };
-                //generate jwt token with the token obj
-                let jwtToken = _generateUserToken(tokenData);
-                //update the response Data
-                responseData.msg = `Welcome ${newUser.user_name}`;
-                responseData.data = { authToken: jwtToken, user_verified: newUser.user_verified, user_email: newUser.user_email, user_avatar: newUser.user_avatar };
+                let token = _generateUserToken(tokenData);
+                let returnResponse = {
+                    user_id: newUser._id,
+                    user_name: newUser.user_name,
+                    user_email: newUser.user_email,
+                    email_verify: newUser.user_email_verified,
+                    token: token
+                }
+                responseData.msg = `Welcome ${newUser.user_name} !!!`;
+                responseData.data = returnResponse;
                 return responseHelper.success(res, responseData);
+            } catch (error) {
+                log.error('failed to get user social login with error::', error);
+                responseData.msg = 'failed to get user login';
+                return responseHelper.error(res, responseData);
             }
-        } catch (error) {
-            log.error('failed to get user social login with error::', error);
-            responseData.msg = 'failed to get user login';
-            return responseHelper.error(res, responseData);
-        }
     },
+    // socialLogin: async(req, res) => {
+    //     let reqBody = req.body;
+    //     log.info('Recieved request for User social login:', reqBody);
+    //     let type = reqBody.type;
+    //     let accessToken = reqBody.access_token;
+    //     let responseData = {};
+    //     try {
+    //         if (type === 'facebook') {
+    //             const facebookUser = await socialLoginService.facebook(accessToken);
+    //             if (!Object.keys(facebookUser).length) {
+    //                 log.error('failed to authenticate user for facebook login::', facebookUser);
+    //                 responseData.msg = 'failed to authenticate login token';
+    //                 return responseHelper.error(res, responseData);
+    //             }
+    //             log.info('user authenticated for facebook login::', facebookUser);
+    //             let query = {
+    //                 user_email: facebookUser.email,
+    //                 facebook_id: facebookUser.id,
+    //                 login_way: 'facebook'
+    //             };
+    //             let userData = await userDbHandler.getUserDetailsByQuery(query);
+    //             if (userData.length) {
+    //                 //user already present in the database, return the jwt token
+    //                 //patch token data obj
+    //                 let tokenData = {
+    //                     user_name: userData[0].user_name,
+    //                     sub: userData[0]._id,
+    //                     user_email: userData[0].user_email
+    //                 };
+    //                 //generate jwt token with the token obj
+    //                 let jwtToken = _generateUserToken(tokenData);
+    //                 log.info('User facebook login found', userData);
+    //                 //update the response Data
+    //                 responseData.msg = `Welcome ${userData[0].user_name}`;
+    //                 responseData.data = { authToken: jwtToken, user_verified: userData[0].user_verified, user_email: userData[0].user_email, user_avatar: userData[0].user_avatar };
+    //                 return responseHelper.success(res, responseData);
+    //             }
+    //             //create a new user in the db
+    //             let newUserObj = {
+    //                 user_name: facebookUser.name,
+    //                 user_email: facebookUser.email,
+    //                 user_password: facebookUser.id,
+    //                 user_verified: facebookUser.email_verified,
+    //                 facebook_id: facebookUser.id,
+    //                 login_way: 'facebook'
+    //             };
+    //             let newUser = await userDbHandler.createUser(newUserObj);
+    //             log.info('new user entry created in the database::', newUser);
+    //             //create a new jwt token and return
+    //             //patch token data obj
+    //             let tokenData = {
+    //                 user_name: newUser.user_name,
+    //                 sub: newUser._id,
+    //                 user_email: newUser.user_email
+    //             };
+    //             //generate jwt token with the token obj
+    //             let jwtToken = _generateUserToken(tokenData);
+    //             //update the response Data
+    //             responseData.msg = `Welcome ${newUser.user_name}`;
+    //             responseData.data = { authToken: jwtToken, user_verified: newUser.user_verified, user_email: newUser.user_email, user_avatar: newUser.user_avatar };
+    //             return responseHelper.success(res, responseData);
+    //         }
+    //         if (type === 'google') {
+    //             const googleUser = await socialLoginService.google(accessToken);
+    //             if (!Object.keys(googleUser).length) {
+    //                 log.error('failed to authenticate user for google login::', googleUser);
+    //                 responseData.msg = 'failed to authenticate user login';
+    //                 return responseHelper.error(res, responseData);
+    //             }
+    //             log.info('user authenticated for google login::', googleUser);
+    //             let query = {
+    //                 user_email: googleUser.email,
+    //                 google_id: googleUser.id,
+    //                 login_way: 'google'
+    //             };
+    //             let userData = await userDbHandler.getUserDetailsByQuery(query);
+    //             if (userData.length) {
+    //                 //user already present in the database, return the jwt token
+    //                 //patch token data obj
+    //                 let tokenData = {
+    //                     user_name: userData[0].user_name,
+    //                     sub: userData[0]._id,
+    //                     user_email: userData[0].user_email
+    //                 };
+    //                 //generate jwt token with the token obj
+    //                 let jwtToken = _generateUserToken(tokenData);
+    //                 log.info('User google login found', userData);
+    //                 //update the response Data
+    //                 responseData.msg = `Welcome ${userData[0].user_name}`;
+    //                 responseData.data = { authToken: jwtToken, user_verified: userData[0].user_verified, user_email: userData[0].user_email, user_avatar: userData[0].user_avatar };
+    //                 return responseHelper.success(res, responseData);
+    //             }
+    //             //create a new user in the db
+    //             let newUserObj = {
+    //                 user_name: googleUser.name,
+    //                 user_email: googleUser.email,
+    //                 user_password: googleUser.id,
+    //                 user_verified: googleUser.email_verified,
+    //                 google_id: googleUser.id,
+    //                 login_way: 'google'
+    //             };
+    //             let newUser = await userDbHandler.createUser(newUserObj);
+    //             log.info('new user entry created in the database::', newUser);
+    //             //create a new jwt token and return
+    //             //patch token data obj
+    //             let tokenData = {
+    //                 user_name: newUser.user_name,
+    //                 sub: newUser._id,
+    //                 user_email: newUser.user_email
+    //             };
+    //             //generate jwt token with the token obj
+    //             let jwtToken = _generateUserToken(tokenData);
+    //             //update the response Data
+    //             responseData.msg = `Welcome ${newUser.user_name}`;
+    //             responseData.data = { authToken: jwtToken, user_verified: newUser.user_verified, user_email: newUser.user_email, user_avatar: newUser.user_avatar };
+    //             return responseHelper.success(res, responseData);
+    //         }
+    //     } catch (error) {
+    //         log.error('failed to get user social login with error::', error);
+    //         responseData.msg = 'failed to get user login';
+    //         return responseHelper.error(res, responseData);
+    //     }
+    // },
     /**
      * Method to handle forgot password by email
      */
