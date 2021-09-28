@@ -206,7 +206,7 @@ module.exports = {
      */
     socialLogin: async(req, res) => {
         let reqObj = req.body;
-        log.info('Recieved request for User social login:', reqBody);
+        log.info('Recieved request for User social login:', reqObj);
         let type = reqObj.type;
         let accessToken = reqObj.access_token;
         let responseData = {};
@@ -242,7 +242,8 @@ module.exports = {
                         access_token: accessToken,
                         login_way: type,
                         device_type: device_type,
-                        device_token: reqObj.device_token
+                        device_token: reqObj.device_token,
+                        email_verify: true
                     };
                     await userDbHandler.updateUserDetailsById(checkEmail[0], updateObj);
                     let tokenData = {
@@ -265,11 +266,12 @@ module.exports = {
                 let saveResponse = {
                     access_token: accessToken,
                     login_way: type,
-                    device_type: device_type,
+                    device_type: reqObj.device_type,
                     device_token: reqObj.device_token,
                     first_name: reqObj.first_name,
                     last_name: reqObj.last_name,
                     user_email: reqObj.user_email,
+                    email_verify: true
                 };
                 let newUser = await userDbHandler.createUser(saveResponse);
 

@@ -9,7 +9,7 @@ const config = require('../../../config/environments');
 const userSchema = new Schema({
     user_name: {
         type: String,
-        required: true,
+        default: '',
         trim: true,
     },
     first_name: {
@@ -40,7 +40,7 @@ const userSchema = new Schema({
     },
     user_password: {
         type: String,
-        required: true,
+        default: '',
         trim: true,
     },
     user_email_verified: {
