@@ -241,7 +241,7 @@ module.exports = {
                     let updateObj = {
                         access_token: accessToken,
                         login_way: type,
-                        device_type: device_type,
+                        device_type: reqObj.device_type,
                         device_token: reqObj.device_token,
                         email_verify: true
                     };
