@@ -3,40 +3,40 @@
  **************************/
 module.exports = {
     //databaseUrl: 'mongodb+srv://admin:admin123@cluster0.5jwzc.mongodb.net/mishmash_dev?authSource=admin',
-    databaseUrl: 'mongodb+srv://admin:admin123@cluster0.5jwzc.mongodb.net/mishmash_dev?authSource=admin',
-    //BaseUrl: 'http://localhost:5000',
-    BaseUrl: 'http://44.195.125.80:5000',
+    databaseUrl: 'mongodb+srv://admin:admin123@cluster0.5jwzc.mongodb.net/youth_dev?authSource=admin',
+    //BaseUrl: 'http://localhost:7000',
+    BaseUrl: 'http://44.195.125.80:7000',
     jwtTokenInfo: {
         secretKey: '9889D22341540031D3386132A7BDD38F4830474543C795D019561C0A308F502B',
-        issuer: 'Mishmash',
+        issuer: 'Youth',
         audience: 'localhost:8080',
         algorithm: 'HS256',
         expiresIn: '8760h'
     },
     adminJwtTokenInfo: {
         secretKey: '1FF5C1ED994DEE6CE4123DC0262A78DFCE3E39618FB96E72D4F8840EDBFE9179',
-        issuer: 'Mishmash',
+        issuer: 'Youth',
         audience: 'localhost:8080',
         algorithm: 'HS256',
         expiresIn: '1h'
     },
     emailTokenInfo: {
         secretKey: 'C094434C7F4F7893C24C7E098CB3C0E91310A2B688372F3DA986D14BAF6B1BDQ',
-        issuer: 'Mishmash',
+        issuer: 'Youth',
         audience: 'localhost:8080',
         algorithm: 'HS256',
         expiresIn: '1h'
     },
     mobileTokenInfo: {
         secretKey: '929FFGG453ERYUI456JKL00KIL42001926589GFGJKDHJJSBJ65568BBHHFSJS90',
-        issuer: 'Mishmash',
+        issuer: 'Youth',
         audience: 'localhost:8080',
         algorithm: 'HS256',
         expiresIn: '1h'
     },
     passwordResetTokenInfo: {
         secretKey: '50520F727971BEE4F5E7FAB94A61E91FCEE5BB6AB796C0B7EC9CF40991C39F74',
-        issuer: 'Mishmash',
+        issuer: 'Youth',
         audience: 'localhost:8080',
         algorithm: 'HS256',
         expiresIn: '1h'
