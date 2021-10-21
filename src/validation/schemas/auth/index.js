@@ -8,17 +8,17 @@ module.exports = {
         user_password: Joi.string().min(6).required().label('Password'),
     }),
     signup: Joi.object().keys({
-        first_name: Joi.string().regex(/^[a-zA-Z. ]*$/).error(new Error('User First name should not contain any special characters and numbers!')),
-        last_name: Joi.string().regex(/^[a-zA-Z. ]*$/).error(new Error('User last name should not contain any special characters and numbers!')),
-        user_name: Joi.string().required().regex(/^[a-zA-Z. ]*$/).error(new Error('Username should not contain any special characters and numbers!')),
+        name: Joi.string().required().regex(/^[a-zA-Z. ]*$/).error(new Error('User First name should not contain any special characters and numbers!')),
+        // last_name: Joi.string().regex(/^[a-zA-Z. ]*$/).error(new Error('User last name should not contain any special characters and numbers!')),
+        // user_name: Joi.string().required().regex(/^[a-zA-Z. ]*$/).error(new Error('Username should not contain any special characters and numbers!')),
         phone_number: Joi.string().min(10).required().label('Phone Number'),
         user_email: Joi.string().required().label('Email'),
-        // user_role: Joi.string().required().label('Role'),
+        // user_role: Joi.string().required().label('Role'),    
         user_password: Joi.string().min(6).required().label('Password'),
-        /* confirm_password: Joi.string()
+        confirm_password: Joi.string()
              .valid(Joi.ref('user_password'))
              .required()
-             .error(new Error('Confirm password and password must be same')),*/
+             .error(new Error('Confirm password and password must be same')),
     }),
     socialLogin: Joi.object().keys({
         type: Joi.string().valid('google', 'facebook', 'apple').required().label('type'),
