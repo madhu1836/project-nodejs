@@ -7,11 +7,6 @@ const config = require('../../../config/environments');
  * Creating User Schema Model
  */
 const userSchema = new Schema({
-    user_name: {
-        type: String,
-        default: '',
-        trim: true,
-    },
     name: {
         type: String,
         trim: true,
