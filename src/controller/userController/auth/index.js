@@ -144,10 +144,7 @@ module.exports = {
                 responseData.msg = 'Phone Number Already Exist !!!';
                 return responseHelper.error(res, responseData);
             }
-            if (checkUsername.length) {
-                responseData.msg = 'User Name Already Exist !!!';
-                return responseHelper.error(res, responseData);
-            }
+            
             let submitData = {
                 user_name:reqObj.user_name,
                 first_name: reqObj.first_name,
