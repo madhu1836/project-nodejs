@@ -78,7 +78,7 @@ module.exports = {
         log.info('Recieved request for User Profile for User:', user);
         let responseData = {};
         try {
-            let userData = await userDbHandler.getUserDetailsById(id, {user_password: 0});
+            let userData = await userDbHandler.getUserDetailsById(id, {user_password: 0, device_token: 0,access_token: 0});
             responseData.msg = `Data Fetched Successfully !!!`;
             responseData.data = userData;
             return responseHelper.success(res, responseData);
@@ -111,14 +111,14 @@ module.exports = {
                 responseData.msg = 'Phone Number Already Exist !!!';
                 return responseHelper.error(res, responseData);
             }
-            let user_avatar = userData.user_avatar;
+            let profile_picture = userData.profile_picture;
             if (req.file) {
-                user_avatar  = req.file.location;
+                profile_picture  = req.file.location;
             }
             let updatedObj = {
                 name: reqObj.name,
                 phone_number: reqObj.phone_number,
-                user_avatar: user_avatar,
+                profile_picture: profile_picture,
             }
             let updateProfile = await userDbHandler.updateUserDetailsById(id, updatedObj);
             responseData.msg = `Data updated sucessfully !!!`;

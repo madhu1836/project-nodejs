@@ -88,21 +88,25 @@ module.exports = {
                 responseData.msg = "Invalid Credentials!!!";
                 return responseHelper.error(res, responseData);
             }
+        
             let checkPassword = await _comparePassword(reqObj.user_password, getUser[0].user_password);
-            console.log();
             if (!checkPassword) {
                 responseData.msg = "Invalid Credentials!!!";
                 return responseHelper.error(res, responseData);
             }
+            if (!getUser[0].user_email_verified){
+                responseData.msg = "Please verify your account!!!";
+                return responseHelper.error(res, responseData);
+            }
+            
             let tokenData = {
                 sub: getUser[0]._id,
                 user_email: getUser[0].user_email,
-                user_name: getUser[0].user_name
             };
             let token = _generateUserToken(tokenData);
             let returnResponse = {
                 user_id: getUser[0]._id,
-                user_name: getUser[0].user_name,
+                name: getUser[0].name,
                 user_email: getUser[0].user_email,
                 email_verify: getUser[0].user_email_verified,
                 token: token
@@ -135,7 +139,6 @@ module.exports = {
             // }
             let checkEmail = await userDbHandler.getUserDetailsByQuery({user_email: reqObj.user_email});
             let checkPhoneNumber = await userDbHandler.getUserDetailsByQuery({ phone_number: reqObj.phone_number });
-            let checkUsername = await userDbHandler.getUserDetailsByQuery({ user_name: reqObj.user_name });
             if (checkEmail.length) {
                 responseData.msg = 'Email Already Exist !!!';
                 return responseHelper.error(res, responseData);
@@ -146,9 +149,7 @@ module.exports = {
             }
             
             let submitData = {
-                user_name:reqObj.user_name,
-                first_name: reqObj.first_name,
-                last_name: reqObj.last_name,
+                name: reqObj.name,
                 user_email: reqObj.user_email,
                 phone_number: reqObj.phone_number,
                 user_password:reqObj.user_password,
@@ -158,7 +159,7 @@ module.exports = {
             //patch token data obj
             let tokenData = {
                 user_email : newUser.user_email,
-                name: newUser.user_name
+                name: newUser.name
             };
             let verificationType = 'email';
             //generate email verification token
@@ -168,7 +169,7 @@ module.exports = {
             let templateBody = {
                 type: verificationType,
                 token: emailVerificationToken,
-                name: newUser.user_name
+                name: newUser.name
             };
             let emailBody = {
                 recipientsAddress: newUser.user_email,
