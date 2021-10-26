@@ -10,7 +10,7 @@ module.exports = {
 		try {
 			// send mail with defined transport object
 			let emailInfo = {
-				from: 'support@mishmash.com', // sender address
+				from: 'support@youth_social_service.com', // sender address
 				to: emailBody.recipientsAddress, // list of receivers
 				subject: emailBody.subject, // Subject line
 				html: emailBody.body
@@ -26,8 +26,8 @@ module.exports = {
 		try {
 			// send mail with defined transport object
 			let emailInfo = {
-				from: 'support@mishmash.com', // sender address
-				to: 'mishmash.com@gmail.com', // list of receivers
+				from: 'support@youth_social_service.com', // sender address
+				to: 'youth_social_service.com@gmail.com', // list of receivers
 				subject: emailBody.subject, // Subject line
 				html: emailBody.body
 			};
