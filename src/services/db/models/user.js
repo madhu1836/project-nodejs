@@ -51,14 +51,14 @@ const userSchema = new Schema({
         enum: ['local', 'facebook', 'google', 'apple'],
         default: 'local',
     },
-    user_avatar: {
+    profile_picture: {
         type: String,
         default: '',
     },
-    user_bio: {
-        type: String,
-        default: '',
-    },
+    // user_bio: {
+    //     type: String,
+    //     default: '',
+    // },
     // dob: {
     //     type: String,
     //     default: ""

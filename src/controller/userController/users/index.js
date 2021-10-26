@@ -107,27 +107,18 @@ module.exports = {
             }
 
             let checkPhoneNumber = await userDbHandler.getUserDetailsByQuery({ phone_number: reqObj.phone_number });
-            let checkUsername = await userDbHandler.getUserDetailsByQuery({ user_name: reqObj.user_name });
             if (checkPhoneNumber.length && checkPhoneNumber[0]._id != id) {
                 responseData.msg = 'Phone Number Already Exist !!!';
                 return responseHelper.error(res, responseData);
             }
-            if (checkUsername.length && checkUsername[0]._id != id) {
-                responseData.msg = 'User Name Already Exist !!!';
-                return responseHelper.error(res, responseData);
-            }
-
             let user_avatar = userData.user_avatar;
             if (req.file) {
                 user_avatar  = req.file.location;
             }
             let updatedObj = {
-                first_name: reqObj.first_name,
-                last_name: reqObj.last_name,
-                user_name: reqObj.user_name,
+                name: reqObj.name,
                 phone_number: reqObj.phone_number,
                 user_avatar: user_avatar,
-                user_bio: reqObj.user_bio,
             }
             let updateProfile = await userDbHandler.updateUserDetailsById(id, updatedObj);
             responseData.msg = `Data updated sucessfully !!!`;

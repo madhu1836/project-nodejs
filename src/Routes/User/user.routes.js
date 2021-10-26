@@ -119,7 +119,7 @@ module.exports = () => {
      * Routes for handling user profile
      */
     Router.get('/user/profile', userInfoController.profile);
-    Router.put('/user/update_profile', [multerService.uploadFile('file').single('user_avatar'), validationMiddleware(userInfoValidationSchema.updateProfile, 'body')], userInfoController.updateProfile);
+    Router.put('/user/update_profile', [multerService.uploadFile('file').single('profile_picture'), validationMiddleware(userInfoValidationSchema.updateProfile, 'body')], userInfoController.updateProfile);
     
     /**
      * Routes for handle change password
