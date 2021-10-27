@@ -17,7 +17,6 @@ module.exports = {
   changePassword: Joi.object().keys({
     old_password: Joi.string().required().label("Old Password"),
     new_password: Joi.string().required().label("New Password"),
-    confirm_password: Joi.string().required().valid(Joi.ref('new_password')).label("Confirm Password")
   }),
   
 };
