@@ -9,9 +9,8 @@ const number_validation = /^[0-9]*$/;
 const float_number_validation = /^[0-9.]*$/;
 module.exports = {
   updateProfile: Joi.object().keys({
-    name: Joi.string().trim().min(3).required().label("User Name"),
-    phone_number: Joi.string().min(10).required().label("Phone Number"),
-    user_email: Joi.string().required().label('Email'),
+    name: Joi.string().trim().min(3).label("User Name"),
+    phone_number: Joi.string().min(10).label("Phone Number"),
 
   }),
   changePassword: Joi.object().keys({
