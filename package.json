@@ -1,7 +1,7 @@
 {
-  "name": "Docsofy",
+  "name": "yss",
   "version": "2.0.0",
-  "description": "Docsofy App",
+  "description": "Youth Social Service App",
   "main": "index.js",
   "scripts": {
     "start": "npm run start:prod",

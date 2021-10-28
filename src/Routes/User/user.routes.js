@@ -31,22 +31,42 @@ module.exports = () => {
         validationMiddleware(userValidationSchema.signup, 'body'),
         userAuthController.signup
     );
-    Router.post(
-        '/user/forgot/password',
-        validationMiddleware(userValidationSchema.forgotPassword, 'body'),
-        userAuthController.forgotPassword
-    );
-    Router.post(
-        '/user/reset/password', [
-            validationMiddleware(userValidationSchema.resetPassword, 'body'),
-        ],
-        userAuthController.resetPassword
-    );
+    // Router.post(
+    //     '/user/forgot/password',
+    //     validationMiddleware(userValidationSchema.forgotPassword, 'body'),
+    //     userAuthController.forgotPassword
+    // );
+    // Router.post(
+    //     '/user/reset/password', [
+    //         validationMiddleware(userValidationSchema.resetPassword, 'body'),
+    //     ],
+    //     userAuthController.resetPassword
+    // );
     // Router.post(
     //     '/user/forgot/passwordMobile',
     //     validationMiddleware(userValidationSchema.forgotPasswordMobile, 'body'),
     //     userAuthController.forgotPasswordMobile
     // );
+    Router.post(
+            '/user/forgot/passwordEmail',
+            validationMiddleware(userValidationSchema.forgotPassworEmail, 'body'),
+            userAuthController.forgotPasswordByEmail
+        );
+
+
+    Router.post(
+        '/user/forgot/verifyOtp',
+            validationMiddleware(userValidationSchema.verifyOtpForgotPassword, 'body'),
+            userAuthController.verifyOtp
+        );
+
+    Router.post(
+        '/user/forgot/resetPassword',
+            validationMiddleware(userValidationSchema.resetPassword, 'body'),
+            userAuthController.resetPassword
+    );
+    
+
 
 
     /**
@@ -58,27 +78,27 @@ module.exports = () => {
     /**
      * Social Login
      */
-    Router.post(
-        '/user/social/login',
-        validationMiddleware(userValidationSchema.socialLogin, 'body'),
-        userAuthController.socialLogin
-    );
+    // Router.post(
+    //     '/user/social/login',
+    //     validationMiddleware(userValidationSchema.socialLogin, 'body'),
+    //     userAuthController.socialLogin
+    // );
     /**
      * Email verification Route
      */
-    Router.get(
-        '/email/u/verification', [
-            validationMiddleware(userValidationSchema.verifyEmail, 'query'),
-            verificationAuthenticated,
-        ],
-        userAuthController.verifyEmail
-    );
+    // Router.get(
+    //     '/email/u/verification', [
+    //         validationMiddleware(userValidationSchema.verifyEmail, 'query'),
+    //         verificationAuthenticated,
+    //     ],
+    //     userAuthController.verifyEmail
+    // );
 
-    Router.post(
-        '/reg/email/u/verification',
-        validationMiddleware(userValidationSchema.resendEmailVerification, 'body'),
-        userAuthController.resendEmailVerification
-    );
+    // Router.post(
+    //     '/reg/email/u/verification',
+    //     validationMiddleware(userValidationSchema.resendEmailVerification, 'body'),
+    //     userAuthController.resendEmailVerification
+    // );
 
     /**
      * Mobile verification Route

@@ -21,7 +21,7 @@ module.exports = (req, res, next) => {
 			log.info('Received request for validating email verification token',token);
 			let decodedEmailToken = jwtDecode.verify(token,config.emailTokenInfo.secretKey);
 			log.info('email verification token extracted successfully with data:',decodedEmailToken);
-			req.emailToken = token;
+			req.decodedEmailToken = token;
 			next();
 			break;
 		}
@@ -29,7 +29,7 @@ module.exports = (req, res, next) => {
 			log.info('Received request for validating password reset verification token',);
 			let decodedPasswordToken = jwtDecode.verify(token,config.passwordResetTokenInfo.secretKey);
 			log.info('password reset token extracted successfully with data:',decodedPasswordToken);
-			req.passwordResetToken = token;
+			req.decodedPasswordToken = token;
 			next();
 			break;
 		}

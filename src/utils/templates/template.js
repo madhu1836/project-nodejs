@@ -21,6 +21,14 @@ module.exports = {
             <br>Team Youth Social Service</br>`;
 		return templateBody;
 	},
+      otpVerification: (data) => {
+		let templateBody = `<h2>Hey there,</h2><br>Use the Otp below to verify yourself!!!
+            <br>Your OTP: ${data.otp}</br>
+            <br><p>If you did not make this request, please ignore this email.</p></br>
+            <br>Regards</br>
+            <br>Team Youth Social Service</br>`;
+            return templateBody;
+      },
 	contactUs: (data) => {
 		let templateBody = `<h4>Hey Admin,</h4>you have got mail from one of your user!
             <br>from,

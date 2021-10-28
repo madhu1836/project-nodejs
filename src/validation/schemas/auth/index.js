@@ -28,16 +28,19 @@ module.exports = {
     }),
     forgotPassword: Joi.object().keys({
         user_email: Joi.string().email().required().label('Email'),
-        // app_type: Joi.string().required().label('App type'),
+        app_type: Joi.string().required().label('App type'),
     }),
     forgotPasswordMobile: Joi.object().keys({
         phone_number: Joi.number().min(10).required().label('Mobile Number'),
         app_type: Joi.string().required().label('App type')
     }),
+    forgotPassworEmail: Joi.object().keys({
+        user_email: Joi.string().email().required().label('Email'),
+    }),
     resetPassword: Joi.object().keys({
-        token: Joi.string().trim().required().label('token'),
-        type: Joi.string().trim().required().label('type'),
-        new_password: Joi.string().min(6).required().label('Password'),
+        // token: Joi.string().trim().required().label('token'),
+        // type: Joi.string().trim().required().label('type'),
+        new_password: Joi.string().min(6).required().label('New Password'), 
         confirm_password: Joi.string()
             .valid(Joi.ref('new_password'))
             .required()
@@ -49,6 +52,9 @@ module.exports = {
     }),
     verifyPhone: Joi.object().keys({
         otp: Joi.string().min(5).max(5).required().label('token'),
+    }),
+    verifyOtpForgotPassword: Joi.object().keys({
+        otp: Joi.string().min(4).max(4).required().label('Otp'),
     }),
     resendEmailVerification: Joi.object().keys({
         user_email: Joi.string().email().required().label('Email'),
