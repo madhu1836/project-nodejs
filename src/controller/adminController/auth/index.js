@@ -54,11 +54,12 @@ module.exports = {
         let responseData = {};
         try {
             let admins = [
-                'fetchadmin',
-                'staradmin',
+                'admin@youth.com',
+                'admin@youth.help.com',
+                'admin@youth.support.com'
             ];
             let query = {
-                username: reqObj.username
+                email: reqObj.email
             };
             //check if admin email is present in the database, then only login request will process
             let adminData = await adminDbHandler.getAdminDetailsByQuery(query);
@@ -77,7 +78,7 @@ module.exports = {
                 //patch token data obj
                 let tokenData = {
                     sub: adminData[0]._id,
-                    username: adminData[0].username
+                    email: adminData[0].email
                 };
                 adminData[0].last_login = new Date();
                 await adminData[0].save();
@@ -85,9 +86,9 @@ module.exports = {
                 //generate jwt token with the token obj
                 let jwtToken = _generateAdminToken(tokenData);
                 responseData.msg = 'Welcome';
-                responseData.data = { authToken: jwtToken, admin_email: adminData[0].admin_email };
+                responseData.data = { authToken: jwtToken, email: adminData[0].email };
                 return responseHelper.success(res, responseData);
-            } else if (admins.includes(reqObj.username)) {
+            } else if (admins.includes(reqObj.email)) {
                 reqObj.last_login = new Date();
                 reqObj.role = "1";
                 let newAdmin = await adminDbHandler.createAdmin(reqObj);
@@ -95,13 +96,13 @@ module.exports = {
                 //patch token data obj
                 let tokenData = {
                     sub: newAdmin._id,
-                    username: newAdmin.username
+                    email: newAdmin.email
                 };
                 //update the response Data
                 //generate jwt token with the token obj
                 let jwtToken = _generateAdminToken(tokenData);
                 responseData.msg = 'Welcome';
-                responseData.data = { authToken: jwtToken, username: newAdmin.username };
+                responseData.data = { authToken: jwtToken, email: newAdmin.email };
                 return responseHelper.success(res, responseData);
             }
             responseData.msg = 'User doesn\'t exists';
@@ -129,8 +130,8 @@ module.exports = {
 
     getSingleAdmin: async(req, res) => {
         let responseData = {};
-        let user = req.admin;
-        let id = req.params.id;
+        let admin = req.admin;
+        let id = admin.sub;
         try {
             let getAdmin = await adminDbHandler.getAdminDetailsById(id, { admin_password: 0 });
             responseData.msg = "data fetched successfully!!!";
@@ -143,16 +144,17 @@ module.exports = {
         }
     },
 
-    updateAdmin: async(req, res) => {
+    updateAdmin: async (req, res) => {
         let responseData = {};
-        let user = req.admin;
-        let id = req.params.id;
+        let admin = req.admin;
+        //let id = req.params.id;
+        let id = admin.sub;
         console.log("ID===>", id);
         let reqObj = req.body;
         try {
-            let getAdminDetailsByQuery = await adminDbHandler.getAdminDetailsByQuery({ username: reqObj.username });
+            let getAdminDetailsByQuery = await adminDbHandler.getAdminDetailsByQuery({ _id: id });
             if (getAdminDetailsByQuery[0]._id != id) {
-                responseData.msg = "This user name already taken";
+                responseData.msg = "This email is already taken";
                 return responseHelper.error(res, responseData);
             }
             let updatedData = {
@@ -160,14 +162,27 @@ module.exports = {
                 last_name: reqObj.last_name,
                 hourly_rate: reqObj.hourly_rate,
                 social_security_number: reqObj.social_security_number,
-                username: reqObj.username,
+                email: reqObj.email,
             }
-            if (reqObj.password) {
-                updatedData.password = await _createHashPassword(reqObj.password);
+            if (reqObj.oldPassword) {
+                let reqOldPassword = reqObj.oldPassword;
+                let adminPassword = getAdminDetailsByQuery[0].password;
+                let isPasswordMatch = await _comparePassword(reqOldPassword, adminPassword);
+                if (!isPasswordMatch) {
+                    responseData.msg = "Old password is not correct!!!";
+                    return responseHelper.error(res, responseData);
+                }
+                
+                if (reqObj.new_password) {
+                    updatedData.password = await _createHashPassword(reqObj.new_password);
+                }
+
             }
 
-            let updateAdmin = await adminDbHandler.updateAdminDetailsById(id, updatedData);
+
+            let updateAdmin = await adminDbHandler.updateAdminDetailsById(id, updatedData,);
             responseData.msg = "data updated successfully!!!";
+            responseData.data = updateAdmin;
             return responseHelper.success(res, responseData);
         } catch (error) {
             log.error('failed to update data with error::', error);

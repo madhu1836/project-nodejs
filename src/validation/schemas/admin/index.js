@@ -7,10 +7,10 @@ const Joi = JoiBase.extend(JoiDate);
  */
 module.exports = {
 	login: Joi.object().keys({
-		username: Joi
+		email: Joi
 			.string()
 			.required()
-			.label('User Name'),
+			.label('User Email'),
 		password: Joi
 			.string()
 			.min(8)
@@ -38,11 +38,11 @@ module.exports = {
 			.trim()
 			.allow("")
 			.label("Social Security Number"),
-		username: Joi
+		email: Joi
 			.string()
 			.trim()
 			.required()
-			.label('User Name'),
+			.label('Email'),
 		password: Joi
 			.string()
 			.min(8)
@@ -59,7 +59,6 @@ module.exports = {
 		first_name: Joi
 			.string()
 			.trim()
-			.required()
 			.label("First Name"),
 		last_name: Joi
 			.string()
@@ -76,23 +75,28 @@ module.exports = {
 			.trim()
 			.allow("")
 			.label("Social Security Number"),
-		username: Joi
+		email: Joi
 			.string()
 			.trim()
-			.required()
-			.label('User Name'),
-		password: Joi
+			.label('Email'),
+		oldPassword: Joi
 			.string()
 			.min(8)
-			.optional()
+			.required()
 			.allow("")
 			.label('Password'),
+		new_password: Joi
+			.string()
+			.min(8)
+			.required()
+			.allow("")
+			.label('New password'),
 		confirm_password: Joi
 			.string()
 			.min(8)
-			.valid(Joi.ref('password'))
-			.optional()
+			.valid(Joi.ref('new_password'))
+			.required()
 			.allow("")
-			.error(new Error('Confirm password and password must be same')),
+			.error(new Error('Confirm password and new password must be same')),
 	}),
 };

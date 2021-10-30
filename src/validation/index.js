@@ -5,5 +5,7 @@ module.exports = {
 	authSchema: require('./schemas/auth'),
 	userInfoSchema: require('./schemas/user'),
 	adminSchema: require('./schemas/admin'),
-	driverSchema: require('./schemas/driver')
+	newsSchema: require('./schemas/news'),
+	newsCategorySchema: require('./schemas/newsCategory')
+
 };

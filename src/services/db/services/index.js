@@ -7,5 +7,6 @@ module.exports = {
 	User: require('./user.service'),
 	Verification: require('./verification.service'),
 	Admin: require('./admin.service'),
-	Driver: require('./driver.service')
+	News: require('./news.service'),
+	NewsCategory: require('./newsCategory.service')
 };
