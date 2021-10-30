@@ -4,6 +4,8 @@ const Router = require('express').Router();
  */
 const userAuthController = require('../../controller').userAuth;
 const userInfoController = require('../../controller').userInfo;
+const userNewsCategoryController = require('../../controller').userNewsCategory;
+const userNewsController = require('../../controller').userNews;
 /**
  * All Middlewares
  */
@@ -48,24 +50,24 @@ module.exports = () => {
     //     userAuthController.forgotPasswordMobile
     // );
     Router.post(
-            '/user/forgot/passwordEmail',
-            validationMiddleware(userValidationSchema.forgotPassworEmail, 'body'),
-            userAuthController.forgotPasswordByEmail
-        );
+        '/user/forgot/passwordEmail',
+        validationMiddleware(userValidationSchema.forgotPassworEmail, 'body'),
+        userAuthController.forgotPasswordByEmail
+    );
 
 
     Router.post(
         '/user/forgot/verifyOtp',
-            validationMiddleware(userValidationSchema.verifyOtpForgotPassword, 'body'),
-            userAuthController.verifyOtp
-        );
+        validationMiddleware(userValidationSchema.verifyOtpForgotPassword, 'body'),
+        userAuthController.verifyOtp
+    );
 
     Router.post(
         '/user/forgot/resetPassword',
-            validationMiddleware(userValidationSchema.resetPassword, 'body'),
-            userAuthController.resetPassword
+        validationMiddleware(userValidationSchema.resetPassword, 'body'),
+        userAuthController.resetPassword
     );
-    
+
 
 
 
@@ -140,7 +142,18 @@ module.exports = () => {
      */
     Router.get('/user/profile', userInfoController.profile);
     Router.put('/user/update_profile', [multerService.uploadFile('file').single('profile_picture'), validationMiddleware(userInfoValidationSchema.updateProfile, 'body')], userInfoController.updateProfile);
-    
+    /**
+    * Routes for handling user news category requests
+    */
+    Router.get('/user/get-newsCategory/:id', userNewsCategoryController.getSingleNewsCategory);
+    Router.get('/user/get-all-newsCategory', userNewsCategoryController.getAllNewsCategory);
+    /**
+     * Routes for handling user news requests
+     */
+
+    Router.get('/user/get-news/:id', userNewsController.getSingleNews);
+    Router.get('/user/get-all-news-by-category/:newsCategory_id', userNewsController.getAllNewsByCategory);
+    Router.get('/user/get-all-news', userNewsController.getAllNews);
     /**
      * Routes for handle change password
      */
