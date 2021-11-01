@@ -5,7 +5,7 @@ const dbService = require('../../../services/db/services');
 const bcrypt = require('bcryptjs');
 const jwtService = require('../../../services/jwt');
 const responseHelper = require('../../../services/customResponse');
-const newsDbHandler = dbService.NewsCatego;
+const CategoryDbHandler = dbService.NewsCategory;
 const config = require('../../../config/environments');
 
 

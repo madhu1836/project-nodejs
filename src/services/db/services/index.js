@@ -8,5 +8,6 @@ module.exports = {
 	Verification: require('./verification.service'),
 	Admin: require('./admin.service'),
 	News: require('./news.service'),
-	NewsCategory: require('./newsCategory.service')
+	NewsCategory: require('./newsCategory.service'),
+	DatingProfile: require('./datingProfile.service')
 };
