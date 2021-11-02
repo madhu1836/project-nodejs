@@ -16,9 +16,21 @@ const datingProfileSchema = new Schema({
         default: '',
     },
     gender:{
-        typer: String,
-        default: ''
+        type: String,
+        enum: ["","male","female"],
+        default: ""
     },
+    bio:{
+        type: String,
+        default: '',
+    },
+    profile_email: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 module.exports = mongoose.model('Profile', datingProfileSchema);
+

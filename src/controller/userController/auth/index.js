@@ -111,7 +111,7 @@ module.exports = {
                 email_verify: getUser[0].user_email_verified,
                 token: token
             }
-            responseData.msg = `Welcome ${getUser[0].user_name} !!!`;
+            responseData.msg = `Welcome ${getUser[0].name} !!!`;
             responseData.data = returnResponse;
             return responseHelper.success(res, responseData);
 

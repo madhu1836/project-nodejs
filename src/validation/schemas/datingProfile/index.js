@@ -6,32 +6,55 @@ const Joi = JoiBase.extend(JoiDate);
  * JOI Validation Schema for Auth Route
  */
 module.exports = {
-	add_profile: Joi.object().keys({
+	create_profile: Joi.object().keys({
         profile_image:Joi
             .string()
-            .label('Profile Image'),
+            .label("Profile Image"),
         name: Joi
 			.string()
             .required()
 			.label("Name"),
-        gender: Joi
-			.string()
+        bio: Joi
+            .string()
+            .optional()
+            .allow("")
+            .label("Your Bio"),
+        profile_email: Joi
+            .string()
             .required()
-            .allow('Male,Female')
-			.label("Gender"),
+            .label("Your Email"),
+        gender: Joi
+            .string()
+            .required()
+            .valid("male", "female")
+            .label('Gender')
+            
     }),
     update_profile: Joi.object().keys({
         profile_image:Joi
             .string()
-            .label('Profile Image'),
+            .label("Profile Image"),
         name: Joi
 			.string()
             .required()
 			.label("Name"),
         gender: Joi
-			.string()
+            .string()
             .required()
-			.label("Gender"),
+            .valid("male", "female")
+            .label('Gender'),
+        profile_email: Joi
+            .string()
+            .required()
+            .label("Your Email"),
+        bio: Joi
+            .string()
+            .optional()
+            .allow("")
+            .label("Your Bio")
 	}),
 
 };
+
+
+
