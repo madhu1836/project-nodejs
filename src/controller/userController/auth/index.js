@@ -232,23 +232,6 @@ module.exports = {
                 verification_type: verificationType
             };
             let passwordTokenInfo = await verificationDbHandler.getVerificationDetailsByQuery(passwordQuery);
-            //if password verification data found update it with new token, else create new entry
-            if (passwordTokenInfo.length) {
-                isVerificationDataExists = true;
-                let updatePasswordVerificationObj = {
-                    token: passwordResetToken,
-                    attempts: passwordTokenInfo[0].attempts + 1
-                };
-                let updateQuery = {
-                    _id: passwordTokenInfo[0]._id,
-                };
-                let option = {
-                    upsert: false
-                };
-                let updatedVerificationData = await verificationDbHandler.updateVerificationByQuery(updateQuery, updatePasswordVerificationObj, option);
-                log.info('password verification token updated in the db', updatedVerificationData);
-            }
-            
             let digits = '0123456789';
             let OTP = '';
             for (let i = 0; i < 4; i++) {
@@ -260,6 +243,25 @@ module.exports = {
 				otp: OTP
 			};
 
+            //if password verification data found update it with new token, else create new entry
+            if (passwordTokenInfo.length) {
+                isVerificationDataExists = true;
+                let updatePasswordVerificationObj = {
+                    token: passwordResetToken,
+                    attempts: passwordTokenInfo[0].attempts + 1,
+                    otp:otpBody.otp
+                };
+                let updateQuery = {
+                    _id: passwordTokenInfo[0]._id,
+                };
+                let option = {
+                    upsert: false
+                };
+                let updatedVerificationData = await verificationDbHandler.updateVerificationByQuery(updateQuery, updatePasswordVerificationObj, option);
+                log.info('password verification token updated in the db', updatedVerificationData);
+            }
+            
+            
             let emailBody = {
 				recipientsAddress: userEmail,
 				subject: 'OTP',

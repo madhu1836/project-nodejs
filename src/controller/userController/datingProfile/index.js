@@ -99,14 +99,11 @@ module.exports={
         let user = req.user;
         let id = user.sub;
         try {
-            let userProfile = await userDbHandler.getUserDetailsById(id)
-            let getProfileList = await datingDbHandler.getProfileDetailsByQuery({});
-            if(userProfile.user_email != getProfileList[0].profile_email){
-                responseData.msg = "Profiles fetched successfully!!!";
-                responseData.data = getProfileList;
-                return responseHelper.success(res, responseData);
-            }
-            
+            let getProfile = await datingDbHandler.getProfileDetailsById(id);
+            let getProfileList = await datingDbHandler.getProfileDetailsByQuery({id: { $ne: getProfile.id }})
+            responseData.msg = "Data Fetched Successfully !!!"; 
+            responseData.data = getProfileList;
+            return responseHelper.success(res, responseData);
         } catch (error) {
             log.error('failed to fetch profiles with error::', error);
             responseData.msg = 'failed to fetch profiles';
