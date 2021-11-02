@@ -13,14 +13,15 @@ const config = require('../../../config/environments');
 module.exports={
     createDatingProfile: async (req, res) => {
         let responseData = {};
-        let user = req.user;
-        let id = user.sub;
+        let admin = req.admin;
+        // let id = admin.sub;
+        let id = req.params.id
         // console.log("ID===>",id);
         let reqObj = req.body;
         try {
             let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({ profile_email: reqObj.profile_email });
             if (getProfileDetailsByQuery.length) {
-                responseData.msg = "Your dating profile already exist";
+                responseData.msg = "This dating profile already exist";
                 return responseHelper.error(res, responseData);
             }
 
@@ -53,8 +54,8 @@ module.exports={
     },
     updateDatingProfile: async (req, res) => {
         let responseData = {};
-        let user = req.user;
-        let id = user.sub;
+        let admin = req.admin;
+        let id = admin.sub;
         // let id = admin.sub;
         // console.log("ID===>", id);
         let reqObj = req.body;
@@ -78,11 +79,11 @@ module.exports={
                 profile_email : reqObj.profile_email,
                 gender: reqObj.gender
             }
-            let userProfile = await userDbHandler.getUserDetailsById(id)
-            if(userProfile.user_email != reqObj.profile_email){
-                responseData.msg = "Email should be same as you profile email!!!";
-                return responseHelper.success(res, responseData);
-            }
+            // let userProfile = await userDbHandler.getUserDetailsById(id)
+            // if(userProfile.user_email != reqObj.profile_email){
+            //     responseData.msg = "Email should be same as you profile email!!!";
+            //     return responseHelper.success(res, responseData);
+            // }
 
             let updatingData = await datingDbHandler.updateProfileByQuery( {profile_email: reqObj.profile_email}, updateData);
             let updatedData = await datingDbHandler.getProfileDetailsByQuery({ profile_email: reqObj.profile_email })
@@ -96,18 +97,10 @@ module.exports={
     },
     getAllProfiles: async (req, res) => {
         let responseData = {};
-        let user = req.user;
-
-        let reqObj = req.body;
+        let admin = req.admin;
+        let id = admin.sub;
         try {
-            
-            let getProfileList = await datingDbHandler.getProfileDetailsByQuery({gender: reqObj.gender})
-            // let getProfileList = await datingDbHandler.getProfileDetailsByQuery({id: { $ne: getProfile.id }})
-            // if(getProfileList[0].gender == reqObj.gender){
-                responseData.msg = "Data Fetched Successfully !!!"; 
-                responseData.data = getProfileList;
-            return responseHelper.success(res, responseData);
-            // }
+            let getProfileList = await datingDbHandler.getProfileDetailsByQuery({})
             responseData.msg = "Data Fetched Successfully !!!"; 
             responseData.data = getProfileList;
             return responseHelper.success(res, responseData);
@@ -118,9 +111,9 @@ module.exports={
         }
     },
 
-    getSingleProfileById: async (req, res) => {
+    getSingleProfileById: async (req, res) => { 
         let responseData = {};
-        let user = req.user;
+        let admin = req.admin;
         let id = req.params.id;
         try {
             let getProfile = await datingDbHandler.getProfileDetailsById(id);
@@ -137,7 +130,7 @@ module.exports={
     
     deleteDatingProfile: async (req, res) => {
         let responseData = {};
-        let user = req.user;
+        let admin = req.admin;
         let id =req.params.id
         try {
             let getProfile = await datingDbHandler.getProfileDetailsById(id);

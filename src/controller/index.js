@@ -15,7 +15,8 @@ const userDatingController = require('./userController/datingProfile');
  */
 const adminAuthController = require('./adminController/auth');
 const adminNewsController = require('./adminController/news');
-const adminNewsCategoryController = require('./adminController/newsCategory')
+const adminNewsCategoryController = require('./adminController/newsCategory');
+const adminDatingController = require('./adminController/datingProfile')
 
 module.exports = {
     /**
@@ -24,6 +25,7 @@ module.exports = {
     adminAuth: adminAuthController,
     adminNews: adminNewsController,
     adminNewsCategory: adminNewsCategoryController,
+    adminDating: adminDatingController,
     /**
      * All User Controllers
      */

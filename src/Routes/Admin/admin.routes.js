@@ -5,6 +5,7 @@ const Router = require("express").Router();
 const adminAuthController = require("../../controller").adminAuth;
 const adminNewsController = require("../../controller").adminNews;
 const adminNewsCategoryController =  require("../../controller").adminNewsCategory;
+const adminDatingController = require("../../controller").adminDating;
 
 /**
  * Middlewares
@@ -12,6 +13,7 @@ const adminNewsCategoryController =  require("../../controller").adminNewsCatego
 const adminAuthenticated = require("../../services/middleware/adminAuthenticate");
 const adminValidationSchema = require("../../validation").adminSchema;
 const newsValidationSchema = require("../../validation").newsSchema;
+const adminDatingValidationSchema = require('../../validation').datingProfileSchema;
 const newsCategoryValidationSchema = require("../../validation").newsCategorySchema;
 const validationMiddleware = require("../../utils/validationMiddleware");
 const multerService = require('../../services/multer');
@@ -59,7 +61,14 @@ module.exports = () => {
     Router.patch("/update-news/:id", [multerService.uploadFile('file').single('news_image'), validationMiddleware(newsValidationSchema.update_news, "body")], adminNewsController.updateNews);
     Router.delete("/delete-newsCategory/:id", adminNewsController.deleteSingleNews);
     
-    
+    /**
+     * Routes for handling dating profile requests
+     */
+     Router.post('/dating/createProfile/:id',[multerService.uploadFile('file').single('profile_image'), validationMiddleware(adminDatingValidationSchema.create_profile, 'body')], adminDatingController.createDatingProfile);
+     Router.put('/dating/updateProfile/:id',[multerService.uploadFile('file').single('profile_image'), validationMiddleware(adminDatingValidationSchema.update_profile, 'body')], adminDatingController.updateDatingProfile);
+     Router.get('/dating/get-all-profiles', adminDatingController.getAllProfiles);
+     Router.get('/dating/get-profile/:id', adminDatingController.getSingleProfileById);
+     Router.delete('/dating/delete-profile/:id', adminDatingController.deleteDatingProfile);  
     /**************************
      * END OF AUTHORIZED ROUTES
      **************************/
