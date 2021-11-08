@@ -35,7 +35,8 @@ module.exports={
                 name: reqObj.name,
                 bio: reqObj.bio,
                 gender: reqObj.gender,
-                profile_email : reqObj.profile_email
+                profile_email : reqObj.profile_email,
+                user_id: id
             }
             let userProfile = await userDbHandler.getUserDetailsById(id)
             if(userProfile.user_email != reqObj.profile_email){
@@ -126,6 +127,24 @@ module.exports={
             return responseHelper.error(res, responseData);
         }
     },
+    getAllProfilesByGender: async (req, res) => {
+        let responseData = {};
+        let admin = req.admin;
+        let reqObj = req.body;
+        try {
+            
+            let getProfileList = await datingDbHandler.getProfileDetailsByQuery({ gender: reqObj.gender })
+                responseData.msg = "Data Fetched Successfully !!!"; 
+                responseData.data = getProfileList;
+                return responseHelper.success(res, responseData);
+            
+        } catch (error) {
+            log.error('failed to fetch profiles with error::', error);
+            responseData.msg = 'failed to fetch profiles';
+            return responseHelper.error(res, responseData);
+        }
+    },
+
 
     
     deleteDatingProfile: async (req, res) => {

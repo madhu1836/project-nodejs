@@ -103,11 +103,11 @@ module.exports={
         let reqObj = req.body;
         try {
             
-            let getProfileList = await datingDbHandler.getProfileDetailsByQuery({gender: reqObj.gender})
-            let getProfilesList = await datingDbHandler.getProfileDetailsByQuery( { user_id: { $ne: id  } } )
+            let getProfileList = await datingDbHandler.getProfileDetailsByQuery({ user_id: { $ne: id }, gender: reqObj.gender})
                 responseData.msg = "Data Fetched Successfully !!!"; 
-                responseData.data = getProfilesList;
-            return responseHelper.success(res, responseData);
+                responseData.data = getProfileList;
+                return responseHelper.success(res, responseData);
+            
         } catch (error) {
             log.error('failed to fetch profiles with error::', error);
             responseData.msg = 'failed to fetch profiles';

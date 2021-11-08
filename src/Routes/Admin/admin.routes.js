@@ -69,6 +69,7 @@ module.exports = () => {
      Router.get('/dating/get-all-profiles', adminDatingController.getAllProfiles);
      Router.get('/dating/get-profile/:id', adminDatingController.getSingleProfileById);
      Router.delete('/dating/delete-profile/:id', adminDatingController.deleteDatingProfile);  
+     Router.get('/dating/get-profiles-by-gender', adminDatingController.getAllProfilesByGender);
     /**************************
      * END OF AUTHORIZED ROUTES
      **************************/
