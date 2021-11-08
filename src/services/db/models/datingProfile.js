@@ -29,6 +29,10 @@ const datingProfileSchema = new Schema({
         required: true,
         trim: true,
     },
+    user_id:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref: 'Users',
+    }
     
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 

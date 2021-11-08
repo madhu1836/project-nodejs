@@ -27,8 +27,7 @@ module.exports = {
             .string()
             .required()
             .valid("male", "female")
-            .label('Gender')
-            
+            .label('Gender'),   
     }),
     update_profile: Joi.object().keys({
         profile_image:Joi
