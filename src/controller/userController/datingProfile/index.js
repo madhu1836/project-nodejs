@@ -118,7 +118,7 @@ module.exports={
     getSingleProfileById: async (req, res) => {
         let responseData = {};
         let user = req.user;
-        let id = req.params.id;
+        let id = req.query.id;
         try {
             let getProfile = await datingDbHandler.getProfileDetailsById(id);
             responseData.msg = "Dating profile fetched successfully!!!";
@@ -135,7 +135,7 @@ module.exports={
     deleteDatingProfile: async (req, res) => {
         let responseData = {};
         let user = req.user;
-        let id =req.params.id
+        let id = req.query.id;
         try {
             let getProfile = await datingDbHandler.getProfileDetailsById(id);
             if(!getProfile){

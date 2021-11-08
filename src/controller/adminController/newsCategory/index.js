@@ -41,7 +41,7 @@ module.exports = {
     getSingleNewsCategory: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
-        let id = req.params.id;
+        let id = req.query.id;
         try {
             let getCategory = await newsCategoryDbHandler.getNewsCategoryDetailsById(id);
             responseData.msg = "news categories fetched successfully!!!";
@@ -72,7 +72,7 @@ module.exports = {
         let responseData = {};
         // console.log("testtt")
         let admin = req.admin;
-        let id = req.params.id;
+        let id = req.query.id;
         // let id = admin._id;
         console.log("ID===>", id);
         let reqObj = req.body;
@@ -99,7 +99,7 @@ module.exports = {
     deleteNewsCategory: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
-        let id = req.params.id;
+        let id = req.query.id;
         try {
             let getCategory = await newsCategoryDbHandler.getNewsCategoryDetailsById(id);
             let deleteCategory = await getCategory.delete();

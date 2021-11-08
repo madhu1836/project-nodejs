@@ -13,7 +13,7 @@ module.exports={
     getSingleNews: async (req, res) => {
         let responseData = {};
         let user = req.user;
-        let id = req.params.id;
+        let id = req.query.id;
         try {
             let getNews = await newsDbHandler.getNewsDetailsById(id);
             responseData.msg = "data fetched successfully!!!";
@@ -42,7 +42,7 @@ module.exports={
     getAllNewsByCategory: async (req, res) => {
         let responseData = {};
         let user = req.user;
-        let id = req.params.newsCategory_id;
+        let id = req.query.newsCategory_id;
         try {
             let getNews = await newsDbHandler.getNewsDetailsByQuery({ newsCategory_id: id });
             // let getVideoData= await videoDbHandler.getVideoDetailsByQuery({id});

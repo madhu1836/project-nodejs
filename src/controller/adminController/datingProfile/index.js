@@ -15,7 +15,7 @@ module.exports={
         let responseData = {};
         let admin = req.admin;
         // let id = admin.sub;
-        let id = req.params.id
+        let id = req.query.id
         // console.log("ID===>",id);
         let reqObj = req.body;
         try {
@@ -109,7 +109,7 @@ module.exports={
     getSingleProfileById: async (req, res) => { 
         let responseData = {};
         let admin = req.admin;
-        let id = req.params.id;
+        let id = req.query.id;
         try {
             let getProfile = await datingDbHandler.getProfileDetailsById(id);
             responseData.msg = "Dating profile fetched successfully!!!";
@@ -144,7 +144,7 @@ module.exports={
     deleteDatingProfile: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
-        let id =req.params.id
+        let id =req.query.id
         try {
             let getProfile = await datingDbHandler.getProfileDetailsById(id);
             if(!getProfile){

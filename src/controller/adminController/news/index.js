@@ -62,7 +62,7 @@ module.exports = {
     getSingleNews: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
-        let id = req.params.id;
+        let id = req.query.id;
         try {
             let getAdmin = await newsDbHandler.getNewsDetailsById(id);
             responseData.msg = "news fetched successfully!!!";
@@ -78,7 +78,7 @@ module.exports = {
     updateNews: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
-        let id = req.params.id;
+        let id = req.query.id;
         // let id = admin.sub;
         console.log("ID===>", id);
         let reqObj = req.body;
@@ -115,7 +115,7 @@ module.exports = {
     deleteSingleNews: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
-        let id =req.params.id
+        let id =req.query.id
         try {
             let getNews = await newsDbHandler.getNewsDetailsById(id);
             if(!getNews){
