@@ -80,12 +80,6 @@ module.exports={
                 profile_email : reqObj.profile_email,
                 gender: reqObj.gender
             }
-            // let userProfile = await userDbHandler.getUserDetailsById(id)
-            // if(userProfile.user_email != reqObj.profile_email){
-            //     responseData.msg = "Email should be same as you profile email!!!";
-            //     return responseHelper.success(res, responseData);
-            // }
-
             let updatingData = await datingDbHandler.updateProfileByQuery( {profile_email: reqObj.profile_email}, updateData);
             let updatedData = await datingDbHandler.getProfileDetailsByQuery({ profile_email: reqObj.profile_email })
             responseData.msg = "Dating profile updated successfully!!!";
