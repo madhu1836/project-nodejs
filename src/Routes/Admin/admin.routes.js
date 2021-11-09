@@ -78,13 +78,13 @@ module.exports = () => {
      */
    
       Router.post("/add-moviesCategory", validationMiddleware(moviesCategoryValidationSchema.add_noviesCategory, "body"),adminMoviesCategoryController.Add_MoviesCategory);
-    //   Router.get("/get-newsCategory/:id", adminNewsCategoryController.getSingleNewsCategory);
-    //   Router.get("/get-all-newsCategory", adminNewsCategoryController.getAllcategory);
-    //   Router.put("/update-newsCategory/:id", validationMiddleware(newsCategoryValidationSchema.update_newsCategory, "body"),adminNewsCategoryController.updateNewsCategory);
-    //   Router.delete("/delete-newsCategory/:id",adminNewsCategoryController.deleteNewsCategory);
+      Router.get("/get-moviesCategory/:id", adminMoviesCategoryController.getSingleMovieCategory);
+      Router.get("/get-all-moviesCategory", adminMoviesCategoryController.getAllcategories);
+      Router.put("/update-moviesCategory/:id", validationMiddleware(moviesCategoryValidationSchema.update_moviesCategory, "body"),adminMoviesCategoryController.updateMovieCategory);
+      Router.delete("/delete-moviesCategory/:id",adminMoviesCategoryController.deleteMoviesCategory);
     /**************************
      * END OF AUTHORIZED ROUTES
-     **************************/
+     **************************/    
 
     return Router;
 };

@@ -7,6 +7,7 @@ const jwtService = require('../../../services/jwt');
 const responseHelper = require('../../../services/customResponse');
 const moviesCategoryDbHandler = dbService.MoviesCategory;
 const config = require('../../../config/environments');
+const { response } = require('express');
 
 
 module.exports = {
@@ -38,55 +39,60 @@ module.exports = {
         }
     },
 
-    getSingleNewsCategory: async (req, res) => {
+    getSingleMovieCategory: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
         let id = req.query.id;
         try {
-            let getCategory = await newsCategoryDbHandler.getNewsCategoryDetailsById(id);
-            responseData.msg = "news categories fetched successfully!!!";
+            let getCategory = await moviesCategoryDbHandler.getMoviesCategoryDetailsById(id);
+            if (!getCategory) {
+                responseData.msg = "Category does not exist!!!";
+                return responseHelper.error(res, responseData);
+            }
+            responseData.msg = "movie category fetched successfully!!!";
             responseData.data = getCategory;
             return responseHelper.success(res, responseData);
         } catch (error) {
-            log.error('failed to fetch news categories with error::', error);
-            responseData.msg = 'failed to fetch news categories';
+            log.error('failed to fetch movie category with error::', error);
+            responseData.msg = 'failed to fetch movie category';
             return responseHelper.error(res, responseData);
         }
     },
-    getAllcategory: async (req, res) => {
+    getAllcategories: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
         try {
-            let getCategoryList = await newsCategoryDbHandler.getNewsCategoryDetailsByQuery({});
-            responseData.msg = "News Catagories fetched successfully!!!";
+            let getCategoryList = await moviesCategoryDbHandler.getMoviesCategoryDetailsByQuery({});
+            if (!getCategoryList.length) {
+                responseData.msg = "Categories does not exist!!!";
+                return responseHelper.error(res, responseData);
+            }
+            responseData.msg = "Movie Catagories fetched successfully!!!";
             responseData.data = getCategoryList;
             return responseHelper.success(res, responseData);
         } catch (error) {
-            log.error('failed to fetch news categories with error::', error);
-            responseData.msg = 'failed to fetch news categories';
+            log.error('failed to fetch movie categories with error::', error);
+            responseData.msg = 'failed to fetch movie categories';
             return responseHelper.error(res, responseData);
         }
     },
-    
-    updateNewsCategory: async (req, res) => {
+
+    updateMovieCategory: async (req, res) => {
         let responseData = {};
-        // console.log("testtt")
         let admin = req.admin;
         let id = req.query.id;
-        // let id = admin._id;
-        console.log("ID===>", id);
         let reqObj = req.body;
         try {
-            let getCategoryDetailsByQuery = await newsCategoryDbHandler.getNewsCategoryDetailsByQuery({ _id: id });
-            if (getCategoryDetailsByQuery[0]._id != id) {
-                responseData.msg = "This Category name already exists";
+            let getCategoryDetailsByQuery = await moviesCategoryDbHandler.getMoviesCategoryDetailsById(id);
+            if (!getCategoryDetailsByQuery) {
+                responseData.msg = "This category does not exist!!!";
                 return responseHelper.error(res, responseData);
             }
             let updatedData = {
-                news_category: reqObj.news_category
+                movies_category: reqObj.movies_category
             }
-            let updateCategoryData = await newsCategoryDbHandler.updateNewsCategoryDetailsById(id, updatedData);
-            let updateData = await newsCategoryDbHandler.getNewsCategoryDetailsById(id);
+            let updateCategoryData = await moviesCategoryDbHandler.updateMoviesCategoryDetailsById(id, updatedData);
+            let updateData = await moviesCategoryDbHandler.getMoviesCategoryDetailsById(id);
             responseData.msg = "data updated successfully!!!";
             responseData.data = updateData;
             return responseHelper.success(res, responseData);
@@ -96,18 +102,22 @@ module.exports = {
             return responseHelper.error(res, responseData);
         }
     },
-    deleteNewsCategory: async (req, res) => {
+    deleteMoviesCategory: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
         let id = req.query.id;
         try {
-            let getCategory = await newsCategoryDbHandler.getNewsCategoryDetailsById(id);
+            let getCategory = await moviesCategoryDbHandler.getMoviesCategoryDetailsById(id);
+            if(!getCategory){
+                responseData.msg = "Category does not exist!!!";
+                return responseHelper.error(res,responseData);
+            }
             let deleteCategory = await getCategory.delete();
             responseData.msg = "category deleted successfully!!!";
             return responseHelper.success(res, responseData);
         } catch (error) {
             log.error('failed to delete category with error::', error);
-            responseData.msg = 'failed to fetch data';
+            responseData.msg = 'failed to fetch data';s
             return responseHelper.error(res, responseData);
         }
     },
