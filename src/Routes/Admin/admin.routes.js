@@ -6,6 +6,7 @@ const adminAuthController = require("../../controller").adminAuth;
 const adminNewsController = require("../../controller").adminNews;
 const adminNewsCategoryController =  require("../../controller").adminNewsCategory;
 const adminDatingController = require("../../controller").adminDating;
+const adminMoviesCategoryController = require("../../controller").adminMoviesCategory;
 
 /**
  * Middlewares
@@ -15,6 +16,7 @@ const adminValidationSchema = require("../../validation").adminSchema;
 const newsValidationSchema = require("../../validation").newsSchema;
 const adminDatingValidationSchema = require('../../validation').datingProfileSchema;
 const newsCategoryValidationSchema = require("../../validation").newsCategorySchema;
+const moviesCategoryValidationSchema = require("../../validation").moviesCategorySchema;
 const validationMiddleware = require("../../utils/validationMiddleware");
 const multerService = require('../../services/multer');
 
@@ -43,7 +45,7 @@ module.exports = () => {
     Router.put("/update-admin", validationMiddleware(adminValidationSchema.update_admin, "body"), adminAuthController.updateAdmin);
     Router.post("/add-admin", validationMiddleware(adminValidationSchema.add_admin, "body"), adminAuthController.addAdmin);
     /**
-     * Middlerware for Handling Request Categories
+     * Middlerware for Handling Request News Categories
      */
    
      Router.post("/add-newsCategory", validationMiddleware(newsCategoryValidationSchema.add_newsCategory, "body"),adminNewsCategoryController.Add_NewsCategory);
@@ -59,7 +61,7 @@ module.exports = () => {
     Router.get("/get-all-news", adminNewsController.getAllNews);
     Router.get("/get-news/:id", adminNewsController.getSingleNews);
     Router.patch("/update-news/:id", [multerService.uploadFile('file').single('news_image'), validationMiddleware(newsValidationSchema.update_news, "body")], adminNewsController.updateNews);
-    Router.delete("/delete-newsCategory/:id", adminNewsController.deleteSingleNews);
+    Router.delete("/delete-news/:id", adminNewsController.deleteSingleNews);
     
     /**
      * Routes for handling dating profile requests
@@ -70,6 +72,16 @@ module.exports = () => {
      Router.get('/dating/get-profile/:id', adminDatingController.getSingleProfileById);
      Router.delete('/dating/delete-profile/:id', adminDatingController.deleteDatingProfile);  
      Router.get('/dating/get-profiles-by-gender', adminDatingController.getAllProfilesByGender);
+     
+     /**
+     * Middlerware for Handling Request Movies Categories
+     */
+   
+      Router.post("/add-moviesCategory", validationMiddleware(moviesCategoryValidationSchema.add_noviesCategory, "body"),adminMoviesCategoryController.Add_MoviesCategory);
+    //   Router.get("/get-newsCategory/:id", adminNewsCategoryController.getSingleNewsCategory);
+    //   Router.get("/get-all-newsCategory", adminNewsCategoryController.getAllcategory);
+    //   Router.put("/update-newsCategory/:id", validationMiddleware(newsCategoryValidationSchema.update_newsCategory, "body"),adminNewsCategoryController.updateNewsCategory);
+    //   Router.delete("/delete-newsCategory/:id",adminNewsCategoryController.deleteNewsCategory);
     /**************************
      * END OF AUTHORIZED ROUTES
      **************************/

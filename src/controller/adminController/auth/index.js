@@ -86,7 +86,7 @@ module.exports = {
                 //generate jwt token with the token obj
                 let jwtToken = _generateAdminToken(tokenData);
                 responseData.msg = 'Welcome';
-                responseData.data = { authToken: jwtToken, email: adminData[0].email };
+                responseData.data = { authToken: jwtToken, email: adminData[0].email, _id: adminData[0]._id };
                 return responseHelper.success(res, responseData);
             } else if (admins.includes(reqObj.email)) {
                 reqObj.last_login = new Date();
@@ -102,7 +102,7 @@ module.exports = {
                 //generate jwt token with the token obj
                 let jwtToken = _generateAdminToken(tokenData);
                 responseData.msg = 'Welcome';
-                responseData.data = { authToken: jwtToken, email: newAdmin.email };
+                responseData.data = { authToken: jwtToken, email: newAdmin.email, _id: newAdmin._id };
                 return responseHelper.success(res, responseData);
             }
             responseData.msg = 'User doesn\'t exists';
@@ -131,9 +131,13 @@ module.exports = {
     getSingleAdmin: async(req, res) => {
         let responseData = {};
         let admin = req.admin;
-        let id = admin.sub;
+        let id = req.query.id;
         try {
             let getAdmin = await adminDbHandler.getAdminDetailsById(id, { admin_password: 0 });
+            if(!getAdmin){
+                responseData.msg = "No such admin exist!!!";
+                return responseHelper.error(res, responseData);
+            }
             responseData.msg = "data fetched successfully!!!";
             responseData.data = getAdmin;
             return responseHelper.success(res, responseData);

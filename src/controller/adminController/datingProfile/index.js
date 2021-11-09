@@ -39,6 +39,10 @@ module.exports={
                 user_id: id
             }
             let userProfile = await userDbHandler.getUserDetailsById(id)
+            if(!userProfile){
+                responseData.msg = "User does not exist";
+                return responseHelper.success(res, responseData);
+            }
             if(userProfile.user_email != reqObj.profile_email){
                 responseData.msg = "Email should be same as you profile email!!!";
                 return responseHelper.success(res, responseData);
@@ -56,13 +60,14 @@ module.exports={
     updateDatingProfile: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
-        let id = admin.sub;
+        // let id = admin.sub;
+        let id = req.query.id;
         // let id = admin.sub;
         // console.log("ID===>", id);
         let reqObj = req.body;
         try {
             let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({ profile_email: reqObj.profile_email });
-            if (!getProfileDetailsByQuery) {
+            if (!getProfileDetailsByQuery.length) {
                 responseData.msg = "Dating profile does not exist";
                 return responseHelper.error(res, responseData);
             }
@@ -80,6 +85,15 @@ module.exports={
                 profile_email : reqObj.profile_email,
                 gender: reqObj.gender
             }
+            let userProfile = await userDbHandler.getUserDetailsById(id)
+            if(!userProfile){
+                responseData.msg = "User does not exist";
+                return responseHelper.success(res, responseData);
+            }
+            if(userProfile.user_email != reqObj.profile_email){
+                responseData.msg = "Email should be same as you profile email!!!";
+                return responseHelper.success(res, responseData);
+            }
             let updatingData = await datingDbHandler.updateProfileByQuery( {profile_email: reqObj.profile_email}, updateData);
             let updatedData = await datingDbHandler.getProfileDetailsByQuery({ profile_email: reqObj.profile_email })
             responseData.msg = "Dating profile updated successfully!!!";
@@ -96,6 +110,10 @@ module.exports={
         let id = admin.sub;
         try {
             let getProfileList = await datingDbHandler.getProfileDetailsByQuery({})
+            if (!getProfileList.length) {
+                responseData.msg = "No dating profile exists";
+                return responseHelper.error(res, responseData);
+            }
             responseData.msg = "Data Fetched Successfully !!!"; 
             responseData.data = getProfileList;
             return responseHelper.success(res, responseData);
@@ -112,6 +130,10 @@ module.exports={
         let id = req.query.id;
         try {
             let getProfile = await datingDbHandler.getProfileDetailsById(id);
+            if (!getProfile) {
+                responseData.msg = "Dating profiles does not exist";
+                return responseHelper.error(res, responseData);
+            }
             responseData.msg = "Dating profile fetched successfully!!!";
             responseData.data = getProfile;
             return responseHelper.success(res, responseData);
@@ -128,6 +150,10 @@ module.exports={
         try {
             
             let getProfileList = await datingDbHandler.getProfileDetailsByQuery({ gender: reqObj.gender })
+            if (!getProfileList.length) {
+                responseData.msg = "Dating profiles does not exist";
+                return responseHelper.error(res, responseData);
+            }
                 responseData.msg = "Data Fetched Successfully !!!"; 
                 responseData.data = getProfileList;
                 return responseHelper.success(res, responseData);

@@ -7,5 +7,6 @@ module.exports = {
 	adminSchema: require('./schemas/admin'),
 	newsSchema: require('./schemas/news'),
 	newsCategorySchema: require('./schemas/newsCategory'),
-	datingProfileSchema: require('./schemas/datingProfile')
+	datingProfileSchema: require('./schemas/datingProfile'),
+	moviesCategorySchema: require('./schemas/moviesCategory')
 };

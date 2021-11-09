@@ -104,6 +104,10 @@ module.exports={
         try {
             
             let getProfileList = await datingDbHandler.getProfileDetailsByQuery({ user_id: { $ne: id }, gender: reqObj.gender})
+            if (!getProfileList.length) {
+                responseData.msg = "Dating profile does not exist";
+                return responseHelper.error(res, responseData);
+            }
                 responseData.msg = "Data Fetched Successfully !!!"; 
                 responseData.data = getProfileList;
                 return responseHelper.success(res, responseData);
@@ -121,6 +125,10 @@ module.exports={
         let id = req.query.id;
         try {
             let getProfile = await datingDbHandler.getProfileDetailsById(id);
+            if (!getProfile) {
+                responseData.msg = "Dating profile does not exist";
+                return responseHelper.error(res, responseData);
+            }
             responseData.msg = "Dating profile fetched successfully!!!";
             responseData.data = getProfile;
             return responseHelper.success(res, responseData);

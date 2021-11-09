@@ -49,6 +49,10 @@ module.exports = {
         let responseData = {};
         try {
             let getNewsList = await newsDbHandler.getNewsDetailsByQuery({});
+            if(!getNewsList.length){
+                responseData.msg = "No news exists";
+                return responseHelper.error(res, responseData);
+            }
             responseData.msg = "News fetched successfully!!!";
             responseData.data = getNewsList;
             return responseHelper.success(res, responseData);
@@ -65,6 +69,10 @@ module.exports = {
         let id = req.query.id;
         try {
             let getAdmin = await newsDbHandler.getNewsDetailsById(id);
+            if(!getAdmin){
+                responseData.msg = "No such news exists";
+                return responseHelper.error(res, responseData);
+            }
             responseData.msg = "news fetched successfully!!!";
             responseData.data = getAdmin;
             return responseHelper.success(res, responseData);

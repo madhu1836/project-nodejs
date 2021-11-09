@@ -5,31 +5,31 @@ const dbService = require('../../../services/db/services');
 const bcrypt = require('bcryptjs');
 const jwtService = require('../../../services/jwt');
 const responseHelper = require('../../../services/customResponse');
-const newsCategoryDbHandler = dbService.NewsCategory;
+const moviesCategoryDbHandler = dbService.MoviesCategory;
 const config = require('../../../config/environments');
 
 
 module.exports = {
 
-    Add_NewsCategory: async (req, res) => {
+    Add_MoviesCategory: async (req, res) => {
         let reqObj = req.body;
         let admin = req.admin;
         log.info('Recieved request for add category:', reqObj);
         let responseData = {};
         console.log(reqObj);
         try {
-            let checkNewsCategory_name = await newsCategoryDbHandler.getNewsCategoryDetailsByQuery({ news_category: reqObj.news_category });
-            if (checkNewsCategory_name.length) {
-                responseData.msg = 'Category name Already Exist !!!';
+            let checkMoviesCategory_name = await moviesCategoryDbHandler.getMoviesCategoryDetailsByQuery({ movies_category: reqObj.movies_category });
+            if (checkMoviesCategory_name.length) {
+                responseData.msg = 'Category Name Already Exist !!!';
                 return responseHelper.error(res, responseData);
             }
             let submitData = {
-                news_category: reqObj.news_category
+                movies_category: reqObj.movies_category
             }
-            let newNews_category = await newsCategoryDbHandler.createNewsCategory(submitData);
-            log.info('Category name created in the database collection', newNews_category);
+            let newMovies_category = await moviesCategoryDbHandler.createMoviesCategory(submitData);
+            log.info('Category name created in the database collection', newMovies_category);
             responseData.msg = 'Category name created successfully';
-            // responseData.data = newNews_category;
+            // responseData.data = newMovies_category;
             return responseHelper.success(res, responseData);
         } catch (error) {
             log.error('failed to create category with error::', error);
@@ -44,10 +44,6 @@ module.exports = {
         let id = req.query.id;
         try {
             let getCategory = await newsCategoryDbHandler.getNewsCategoryDetailsById(id);
-            if (!getCategory) {
-                responseData.msg = 'Category name does not exist !!!';
-                return responseHelper.error(res, responseData);
-            }
             responseData.msg = "news categories fetched successfully!!!";
             responseData.data = getCategory;
             return responseHelper.success(res, responseData);
@@ -62,10 +58,6 @@ module.exports = {
         let admin = req.admin;
         try {
             let getCategoryList = await newsCategoryDbHandler.getNewsCategoryDetailsByQuery({});
-            if (!getCategoryList.length) {
-                responseData.msg = 'Categories does not exist !!!';
-                return responseHelper.error(res, responseData);
-            }
             responseData.msg = "News Catagories fetched successfully!!!";
             responseData.data = getCategoryList;
             return responseHelper.success(res, responseData);
@@ -82,12 +74,12 @@ module.exports = {
         let admin = req.admin;
         let id = req.query.id;
         // let id = admin._id;
-        // console.log("ID===>", id);
+        console.log("ID===>", id);
         let reqObj = req.body;
         try {
-            let getCategoryDetailsByQuery = await newsCategoryDbHandler.getNewsCategoryDetailsById(id);
-            if (!getCategoryDetailsByQuery) {
-                responseData.msg = "This Category does not exists";
+            let getCategoryDetailsByQuery = await newsCategoryDbHandler.getNewsCategoryDetailsByQuery({ _id: id });
+            if (getCategoryDetailsByQuery[0]._id != id) {
+                responseData.msg = "This Category name already exists";
                 return responseHelper.error(res, responseData);
             }
             let updatedData = {
@@ -110,10 +102,6 @@ module.exports = {
         let id = req.query.id;
         try {
             let getCategory = await newsCategoryDbHandler.getNewsCategoryDetailsById(id);
-            if (!getCategory) {
-                responseData.msg = 'Category name does not exist !!!';
-                return responseHelper.error(res, responseData);
-            }
             let deleteCategory = await getCategory.delete();
             responseData.msg = "category deleted successfully!!!";
             return responseHelper.success(res, responseData);

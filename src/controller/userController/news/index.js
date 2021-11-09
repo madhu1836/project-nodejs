@@ -16,6 +16,10 @@ module.exports={
         let id = req.query.id;
         try {
             let getNews = await newsDbHandler.getNewsDetailsById(id);
+            if(!getNews){
+                responseData.msg = "No such news exist";
+                return responseHelper.error(res, responseData);
+            }   
             responseData.msg = "data fetched successfully!!!";
             responseData.data = getNews;
             return responseHelper.success(res, responseData);
@@ -30,6 +34,10 @@ module.exports={
         let user = req.user;
         try {
             let getNewsList = await newsDbHandler.getNewsDetailsByQuery({});
+            if(!getNewsList.length){
+                responseData.msg = "No news available in this category";
+                return responseHelper.error(res, responseData);
+            }
             responseData.msg = "Data fetched successfully!!!";
             responseData.data = getNewsList;
             return responseHelper.success(res, responseData);
@@ -45,6 +53,10 @@ module.exports={
         let id = req.query.newsCategory_id;
         try {
             let getNews = await newsDbHandler.getNewsDetailsByQuery({ newsCategory_id: id });
+            if(!getNews.length){
+                responseData.msg = "No news available in this category";
+                return responseHelper.error(res, responseData);
+            }
             // let getVideoData= await videoDbHandler.getVideoDetailsByQuery({id});
             responseData.msg = "data fetched successfully!!!";
 
