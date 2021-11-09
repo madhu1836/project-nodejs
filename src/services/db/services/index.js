@@ -10,5 +10,6 @@ module.exports = {
 	News: require('./news.service'),
 	NewsCategory: require('./newsCategory.service'),
 	DatingProfile: require('./datingProfile.service'),
-	MoviesCategory: require('./moviesCategory.service')
+	MoviesCategory: require('./moviesCategory.service'),
+	Movies: require('./movies.service')
 };

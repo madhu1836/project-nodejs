@@ -7,6 +7,7 @@ const adminNewsController = require("../../controller").adminNews;
 const adminNewsCategoryController =  require("../../controller").adminNewsCategory;
 const adminDatingController = require("../../controller").adminDating;
 const adminMoviesCategoryController = require("../../controller").adminMoviesCategory;
+const adminMoviesController = require("../../controller").adminMovies;
 
 /**
  * Middlewares
@@ -17,6 +18,7 @@ const newsValidationSchema = require("../../validation").newsSchema;
 const adminDatingValidationSchema = require('../../validation').datingProfileSchema;
 const newsCategoryValidationSchema = require("../../validation").newsCategorySchema;
 const moviesCategoryValidationSchema = require("../../validation").moviesCategorySchema;
+const moviesValidationSchema = require("../../validation").moviesSchema;
 const validationMiddleware = require("../../utils/validationMiddleware");
 const multerService = require('../../services/multer');
 
@@ -82,7 +84,16 @@ module.exports = () => {
       Router.get("/get-all-moviesCategory", adminMoviesCategoryController.getAllcategories);
       Router.put("/update-moviesCategory/:id", validationMiddleware(moviesCategoryValidationSchema.update_moviesCategory, "body"),adminMoviesCategoryController.updateMovieCategory);
       Router.delete("/delete-moviesCategory/:id",adminMoviesCategoryController.deleteMoviesCategory);
-    /**************************
+      /**
+     * Routes for Handling Movies Request
+     */
+    
+    Router.post("/add-movie", [multerService.uploadFile('file').single('movie_thumbnail'), validationMiddleware(moviesValidationSchema.add_movie, "body")], adminMoviesController.addMovie);
+    // Router.get("/get-all-news", adminNewsController.getAllNews);
+    // Router.get("/get-news/:id", adminNewsController.getSingleNews);
+    // Router.patch("/update-news/:id", [multerService.uploadFile('file').single('news_image'), validationMiddleware(newsValidationSchema.update_news, "body")], adminNewsController.updateNews);
+    // Router.delete("/delete-news/:id", adminNewsController.deleteSingleNews);
+     /**************************
      * END OF AUTHORIZED ROUTES
      **************************/    
 

@@ -8,5 +8,6 @@ module.exports = {
 	newsSchema: require('./schemas/news'),
 	newsCategorySchema: require('./schemas/newsCategory'),
 	datingProfileSchema: require('./schemas/datingProfile'),
-	moviesCategorySchema: require('./schemas/moviesCategory')
+	moviesCategorySchema: require('./schemas/moviesCategory'),
+	moviesSchema: require('./schemas/Movies')
 };
