@@ -171,6 +171,7 @@ module.exports = {
                 token: emailVerificationToken,
                 name: newUser.name
             };
+            // console.log("token=======>", templateBody.token)
             let emailBody = {
                 recipientsAddress: newUser.user_email,
                 subject: 'A link to verify your email',
@@ -187,6 +188,7 @@ module.exports = {
                 let newEmailVerification = await verificationDbHandler.createVerification(emailObj);
                 log.info('new email verification entry created successfully in the database',newEmailVerification);
                 responseData.msg = 'your account has been created successfully! Please verify your email. Verification link has been sent on your registered email Id';
+                responseData.data = newEmailVerification
                 // responseData.data = {token:mobileverificationtoken, type:'mobile'};
                 return responseHelper.success(res,responseData);
             }
@@ -196,6 +198,43 @@ module.exports = {
         } catch (error) {
             log.error('failed to get user signup with error::', error);
             responseData.msg = 'failed to create user';
+            return responseHelper.error(res, responseData);
+        }
+    },
+    verifyEmail: async(req, res) => {
+        let emailToken = req.decodedEmailToken;
+        console.log("tokennnnn========================> ", emailToken)
+        log.info('Received request for email verification ::', emailToken);
+        let responseData = {};
+        try {
+            let query = {
+                token: emailToken,
+                verification_type: 'email'
+            };
+            let emailInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
+            if (!emailInfo.length) {
+                responseData.msg = 'Invalid email verification request or token expired';
+                return responseHelper.error(res, responseData);
+            }
+            //update user email verification status
+            let userId = emailInfo[0].user_id;
+            let updateObj = {
+                user_email_verified: true
+            };
+            let updatedUser = await userDbHandler.updateUserDetailsById(userId, updateObj);
+            if (!updatedUser) {
+                log.info('failed to verify user email');
+                responseData.msg = 'failed to verify email';
+                return responseHelper.error(res, responseData);
+            }   
+            log.info('user email verification status updated successfully', updatedUser);
+            let removedTokenInfo = await _handleVerificationDataUpdate(emailInfo[0]._id);
+            log.info('email verification token has been removed::', removedTokenInfo);
+            responseData.msg = 'your email has been succesfully verified! Please login to continue';
+            return responseHelper.success(res, responseData);
+        } catch (error) {
+            log.error('failed to process email verification::', error);
+            responseData.msg = 'failed to verify user email';
             return responseHelper.error(res, responseData);
         }
     },

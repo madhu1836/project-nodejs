@@ -69,6 +69,14 @@ module.exports = () => {
         validationMiddleware(userValidationSchema.resetPassword, 'body'),
         userAuthController.resetPassword
     );
+    Router.get(
+        '/email/u/verification', [
+            validationMiddleware(userValidationSchema.verifyEmail, 'query'),
+            verificationAuthenticated,
+        ],
+        userAuthController.verifyEmail
+    );
+
 
 
 
