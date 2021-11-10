@@ -48,6 +48,7 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "payumoney_nodejs": "^2.0.4",
+    "pug": "^3.0.2",
     "stripe": "^7.13.0",
     "swagger-express-router": "^1.0.0",
     "swagger-ui-express": "^4.1.6",

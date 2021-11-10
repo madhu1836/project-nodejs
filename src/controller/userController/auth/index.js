@@ -363,7 +363,7 @@ module.exports = {
             //update user email verification status
             let userId = verificationInfo[0].user_id;
             let updateObj = {
-                user_phone_verified: true
+                user_email_verified: true
             };
             let updatedUser = await userDbHandler.updateUserDetailsById(userId, updateObj);
             if (!updatedUser) {
