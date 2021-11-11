@@ -1,6 +1,6 @@
 'use strict';
 const logger = require('../../../services/logger');
-const log = new logger('AdminAuthController').getChildLogger();
+const log = new logger('AdminMovieController').getChildLogger();
 const dbService = require('../../../services/db/services');
 const bcrypt = require('bcryptjs');
 const jwtService = require('../../../services/jwt');
@@ -53,13 +53,13 @@ module.exports = {
     getAllMovies: async (req, res) => {
         let responseData = {};
         try {
-            let getNewsList = await moviesDbHandler.getMoviesDetailsByQuery({});
-            if(!getNewsList.length){
+            let getMoviesList = await moviesDbHandler.getMoviesDetailsByQuery({});
+            if(!getMoviesList.length){
                 responseData.msg = "No movies exists";
                 return responseHelper.error(res, responseData);
             }
             responseData.msg = "Movies fetched successfully!!!";
-            responseData.data = getNewsList;
+            responseData.data = getMoviesList;
             return responseHelper.success(res, responseData);
         } catch (error) {
             log.error('failed to fetch movies with error::', error);
@@ -73,13 +73,13 @@ module.exports = {
         let admin = req.admin;
         let id = req.query.id;
         try {
-            let getAdmin = await moviesDbHandler.getMoviesDetailsById(id);
-            if(!getAdmin){
+            let getMovie = await moviesDbHandler.getMoviesDetailsById(id);
+            if(!getMovie){
                 responseData.msg = "No such movie exists";
                 return responseHelper.error(res, responseData);
             }
             responseData.msg = "movie fetched successfully!!!";
-            responseData.data = getAdmin;
+            responseData.data = getMovie;
             return responseHelper.success(res, responseData);
         } catch (error) {
             log.error('failed to fetch movie with error::', error);

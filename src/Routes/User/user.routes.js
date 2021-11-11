@@ -7,6 +7,8 @@ const userInfoController = require('../../controller').userInfo;
 const userNewsCategoryController = require('../../controller').userNewsCategory;
 const userNewsController = require('../../controller').userNews;
 const userDatingController = require('../../controller').userDating;
+const userMoviesCategoryController = require('../../controller').userMoviesCategory;
+const userMoviesController = require('../../controller').userMovies;
 /**
  * All Middlewares
  */
@@ -172,7 +174,19 @@ module.exports = () => {
     Router.get('/user/dating/get-all-profiles', userDatingController.getAllProfiles);
     Router.get('/user/dating/get-profile/:id', userDatingController.getSingleProfileById);
     Router.delete('/user/dating/delete-profile/:id', userDatingController.deleteDatingProfile);    
-
+     /**
+     * Middlerware for Handling Request Movies Categories
+     */
+   
+      Router.get("/user/get-moviesCategory/:id", userMoviesCategoryController.getSingleMovieCategory);
+      Router.get("/user/get-all-moviesCategory", userMoviesCategoryController.getAllcategories);
+      /**
+     * Routes for Handling Movies Request
+     */
+    
+    Router.get("/user/get-all-movies", userMoviesController.getAllMovies);
+    Router.get("/user/get-movie/:id", userMoviesController.getSingleMovie);
+    Router.get("/user/get-movies-by/:category_id", userMoviesController.getMoviesByCategoryId);
     /**
      * Routes for handle change password
      */

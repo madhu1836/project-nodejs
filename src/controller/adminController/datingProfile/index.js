@@ -1,6 +1,6 @@
 'use strict';
 const logger = require('../../../services/logger');
-const log = new logger('AdminCategoryController').getChildLogger();
+const log = new logger('AdminDatingController').getChildLogger();
 const dbService = require('../../../services/db/services');
 const bcrypt = require('bcryptjs');
 const jwtService = require('../../../services/jwt');

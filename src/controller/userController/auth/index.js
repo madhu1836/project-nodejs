@@ -1,6 +1,6 @@
 'use strict';
 const logger = require('../../../services/logger');
-const log = new logger('AuthController').getChildLogger();
+const log = new logger('UserAuthController').getChildLogger();
 const dbService = require('../../../services/db/services');
 const bcrypt = require('bcryptjs');
 const config = require('../../../config/environments');

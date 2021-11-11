@@ -1,6 +1,6 @@
 'use strict';
 const logger = require('../../../services/logger');
-const log = new logger('AdminAuthController').getChildLogger();
+const log = new logger('AdminNewsController').getChildLogger();
 const dbService = require('../../../services/db/services');
 const bcrypt = require('bcryptjs');
 const jwtService = require('../../../services/jwt');
@@ -68,13 +68,13 @@ module.exports = {
         let admin = req.admin;
         let id = req.query.id;
         try {
-            let getAdmin = await newsDbHandler.getNewsDetailsById(id);
-            if(!getAdmin){
+            let getNews = await newsDbHandler.getNewsDetailsById(id);
+            if(!getNews){
                 responseData.msg = "No such news exists";
                 return responseHelper.error(res, responseData);
             }
             responseData.msg = "news fetched successfully!!!";
-            responseData.data = getAdmin;
+            responseData.data = getNews;
             return responseHelper.success(res, responseData);
         } catch (error) {
             log.error('failed to fetch news with error::', error);
