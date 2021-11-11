@@ -10,6 +10,10 @@ const newsSchema = new Schema({
     movies_category: {
         type: String,
         default: '',
+    },
+    category_thumbnail: {
+        type: String,
+        default: ''
     }
     
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });

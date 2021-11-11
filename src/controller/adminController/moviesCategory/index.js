@@ -24,8 +24,18 @@ module.exports = {
                 responseData.msg = 'Category Name Already Exist !!!';
                 return responseHelper.error(res, responseData);
             }
+            let fileLocation = '';
+
+            if (req.file) {
+                fileLocation = req.file.location;
+            }
             let submitData = {
-                movies_category: reqObj.movies_category
+                movies_category: reqObj.movies_category,
+                category_thumbnail: fileLocation,
+            }
+            if(!submitData.category_thumbnail){
+                responseData.msg = "Failed to upload thumbnail";
+                return responseHelper.error(res, responseData)
             }
             let newMovies_category = await moviesCategoryDbHandler.createMoviesCategory(submitData);
             log.info('Category name created in the database collection', newMovies_category);

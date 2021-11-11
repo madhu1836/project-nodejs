@@ -120,6 +120,10 @@ module.exports = {
                 phone_number: reqObj.phone_number,
                 profile_picture: profile_picture,
             }
+            // if(!updatedObj.profile_picture){
+            //     responseData.msg = "Failed to upload profile picture";
+            //     return responseHelper.error(res, responseData)
+            // }
             let updateProfile = await userDbHandler.updateUserDetailsById(id, updatedObj);
             responseData.msg = `Data updated sucessfully !!!`;
             return responseHelper.success(res, responseData);

@@ -7,9 +7,6 @@ const Joi = JoiBase.extend(JoiDate);
  */
 module.exports = {
     add_movie: Joi.object().keys({
-        movie_thumbnail: Joi
-            .string()
-            .label('Movie Thumbnail'),
         movie_link: Joi
             .string()
             .required()
@@ -29,20 +26,14 @@ module.exports = {
 
     }),
     update_movie: Joi.object().keys({
-        movie_thumbnail: Joi
-            .string()
-            .label('Movie Thumbnail'),
         movie_link: Joi
             .string()
-            .required()
             .label("Movie URL"),
         moviesCategory_id: Joi
             .string()
-            .required()
             .label("Movie Category Id"),
         movie_name: Joi
             .string()
-            .required()
             .label("Movie Name"),
         description: Joi
             .string()

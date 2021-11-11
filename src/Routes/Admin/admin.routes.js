@@ -79,7 +79,7 @@ module.exports = () => {
      * Middlerware for Handling Request Movies Categories
      */
    
-      Router.post("/add-moviesCategory", validationMiddleware(moviesCategoryValidationSchema.add_noviesCategory, "body"),adminMoviesCategoryController.Add_MoviesCategory);
+      Router.post("/add-moviesCategory", multerService.uploadFile('file').single('category_thumbnail'), validationMiddleware(moviesCategoryValidationSchema.add_noviesCategory, "body"),adminMoviesCategoryController.Add_MoviesCategory);
       Router.get("/get-moviesCategory/:id", adminMoviesCategoryController.getSingleMovieCategory);
       Router.get("/get-all-moviesCategory", adminMoviesCategoryController.getAllcategories);
       Router.put("/update-moviesCategory/:id", validationMiddleware(moviesCategoryValidationSchema.update_moviesCategory, "body"),adminMoviesCategoryController.updateMovieCategory);
@@ -89,10 +89,10 @@ module.exports = () => {
      */
     
     Router.post("/add-movie", [multerService.uploadFile('file').single('movie_thumbnail'), validationMiddleware(moviesValidationSchema.add_movie, "body")], adminMoviesController.addMovie);
-    // Router.get("/get-all-news", adminNewsController.getAllNews);
-    // Router.get("/get-news/:id", adminNewsController.getSingleNews);
-    // Router.patch("/update-news/:id", [multerService.uploadFile('file').single('news_image'), validationMiddleware(newsValidationSchema.update_news, "body")], adminNewsController.updateNews);
-    // Router.delete("/delete-news/:id", adminNewsController.deleteSingleNews);
+    Router.get("/get-all-movies", adminMoviesController.getAllMovies);
+    Router.get("/get-movie/:id", adminMoviesController.getSingleMovie);
+    Router.put("/update-movie/:id", [multerService.uploadFile('file').single('movie_thumbnail'), validationMiddleware(moviesValidationSchema.update_movie, "body")], adminMoviesController.updateMovie);
+    Router.delete("/delete-movie/:id", adminMoviesController.deleteSingleMovie);
      /**************************
      * END OF AUTHORIZED ROUTES
      **************************/    

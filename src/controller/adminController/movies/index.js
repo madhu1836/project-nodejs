@@ -35,6 +35,11 @@ module.exports = {
                 movie_name: reqObj.movie_name,
                 description: reqObj.description
             }
+            if(!Data.movie_thumbnail){
+                responseData.msg = "Failed to upload movie thumbnail";
+                return responseHelper.error(res, responseData)
+            }
+
             let Movie = await moviesDbHandler.createMovies(Data);
             responseData.msg = "Movie added successfully!!!";
             responseData.data = Movie;
@@ -45,45 +50,45 @@ module.exports = {
             return responseHelper.error(res, responseData);
         }
     },
-    getAllNews: async (req, res) => {
+    getAllMovies: async (req, res) => {
         let responseData = {};
         try {
-            let getNewsList = await newsDbHandler.getNewsDetailsByQuery({});
+            let getNewsList = await moviesDbHandler.getMoviesDetailsByQuery({});
             if(!getNewsList.length){
-                responseData.msg = "No news exists";
+                responseData.msg = "No movies exists";
                 return responseHelper.error(res, responseData);
             }
-            responseData.msg = "News fetched successfully!!!";
+            responseData.msg = "Movies fetched successfully!!!";
             responseData.data = getNewsList;
             return responseHelper.success(res, responseData);
         } catch (error) {
-            log.error('failed to fetch news with error::', error);
-            responseData.msg = 'failed to fetch news';
+            log.error('failed to fetch movies with error::', error);
+            responseData.msg = 'failed to fetch movies';
             return responseHelper.error(res, responseData);
         }
     },
 
-    getSingleNews: async (req, res) => {
+    getSingleMovie: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
         let id = req.query.id;
         try {
-            let getAdmin = await newsDbHandler.getNewsDetailsById(id);
+            let getAdmin = await moviesDbHandler.getMoviesDetailsById(id);
             if(!getAdmin){
-                responseData.msg = "No such news exists";
+                responseData.msg = "No such movie exists";
                 return responseHelper.error(res, responseData);
             }
-            responseData.msg = "news fetched successfully!!!";
+            responseData.msg = "movie fetched successfully!!!";
             responseData.data = getAdmin;
             return responseHelper.success(res, responseData);
         } catch (error) {
-            log.error('failed to fetch news with error::', error);
-            responseData.msg = 'failed to fetch news';
+            log.error('failed to fetch movie with error::', error);
+            responseData.msg = 'failed to fetch movie';
             return responseHelper.error(res, responseData);
         }
     },
 
-    updateNews: async (req, res) => {
+    updateMovie: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
         let id = req.query.id;
@@ -91,9 +96,9 @@ module.exports = {
         console.log("ID===>", id);
         let reqObj = req.body;
         try {
-            let getNewsDetailsByQuery = await newsDbHandler.getNewsDetailsById(id);
-            if (!getNewsDetailsByQuery) {
-                responseData.msg = "This news does not exist";
+            let getMovieDetailsByQuery = await moviesDbHandler.getMoviesDetailsById(id);
+            if (!getMovieDetailsByQuery) {
+                responseData.msg = "This movie does not exist";
                 return responseHelper.error(res, responseData);
             }
 
@@ -104,39 +109,45 @@ module.exports = {
             }
 
             let updatedData = {
-                news_image: fileLocation,
-                news_heading: reqObj.news_heading,
-                short_description: reqObj.short_description,
-                detail_description: reqObj.detail_description,
-                newsCategory_id: reqObj.newsCategory_id
+                movie_thumbnail: fileLocation,
+                movie_link: reqObj.movie_link,
+                moviesCategory_id: reqObj.moviesCategory_id,
+                movie_name: reqObj.movie_name,
+                description: reqObj.description
+            }
+            if(!updatedData.movie_thumbnail){
+                responseData.msg = "Failed to upload movie thumbnail";
+                return responseHelper.error(res, responseData)
             }
 
-            let updateNews = await newsDbHandler.updateNewsDetailsById(id, updatedData,);
-            responseData.msg = "News updated successfully!!!";
+            let updateMovie = await moviesDbHandler.updateMoviesDetailsById(id, updatedData,);
+            let updatedMovieData = await moviesDbHandler.getMoviesDetailsById(id)
+            responseData.msg = "Movie updated successfully!!!";
+            responseData.data = updatedMovieData;
             return responseHelper.success(res, responseData);
         } catch (error) {
-            log.error('failed to update News with error::', error);
-            responseData.msg = "failed to update News";
+            log.error('failed to update Movie with error::', error);
+            responseData.msg = "failed to update Movie";
             return responseHelper.error(res, responseData);
         }
     },
-    deleteSingleNews: async (req, res) => {
+    deleteSingleMovie: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
         let id =req.query.id
         try {
-            let getNews = await newsDbHandler.getNewsDetailsById(id);
-            if(!getNews){
-                responseData.msg= 'No such news exist in database';
+            let getMovie = await moviesDbHandler.getMoviesDetailsById(id);
+            if(!getMovie){
+                responseData.msg= 'No such movie exist in database';``
                 return responseHelper.error(res, responseData);
             }
 
-            let deleteNews= await newsDbHandler.deleteNewsById(id);
-            responseData.msg = "News Deleted successfully!!!";
+            let deleteMovie= await moviesDbHandler.deleteMoviesById(id);
+            responseData.msg = "movie Deleted successfully!!!";
             return responseHelper.success(res, responseData);
         } catch (error) {
-            log.error('failed to delete news with error::', error);
-            responseData.msg = 'failed to delete news';
+            log.error('failed to delete movie with error::', error);
+            responseData.msg = 'failed to delete movie';
             return responseHelper.error(res, responseData);
         }
     },
