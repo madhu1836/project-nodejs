@@ -11,6 +11,7 @@ const userNewsController = require('./userController/news');
 const userDatingController = require('./userController/datingProfile');
 const userMoviesCategoryController = require('./userController/moviesCategory');
 const userMoviesController = require('./userController/movies');
+const UserSearchMovieController = require('./userController/searchMovie')
 
 /**
  * All Admin Controller
@@ -42,4 +43,5 @@ module.exports = {
     userDating: userDatingController,
     userMoviesCategory: userMoviesCategoryController,
     userMovies : userMoviesController,
+    userSearchMovie: UserSearchMovieController,
 };

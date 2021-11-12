@@ -9,6 +9,7 @@ const userNewsController = require('../../controller').userNews;
 const userDatingController = require('../../controller').userDating;
 const userMoviesCategoryController = require('../../controller').userMoviesCategory;
 const userMoviesController = require('../../controller').userMovies;
+const userSearchMovieController = require('../../controller').userSearchMovie;
 /**
  * All Middlewares
  */
@@ -17,6 +18,7 @@ const verificationAuthenticated = require('../../services/middleware/verificatio
 const userValidationSchema = require('../../validation').authSchema;
 const userInfoValidationSchema = require('../../validation').userInfoSchema;
 const userDatingValidationSchema = require('../../validation').datingProfileSchema;
+const userSearchMovieValidationSchema = require('../../validation').searchMovieSchema;
 const validationMiddleware = require('../../utils/validationMiddleware');
 const multerService = require('../../services/multer');
 module.exports = () => {
@@ -187,11 +189,18 @@ module.exports = () => {
     Router.get("/user/get-all-movies", userMoviesController.getAllMovies);
     Router.get("/user/get-movie/:id", userMoviesController.getSingleMovie);
     Router.get("/user/get-movies-by/:category_id", userMoviesController.getMoviesByCategoryId);
+    
     /**
      * Routes for handle change password
      */
     Router.put('/user/change_password', validationMiddleware(userInfoValidationSchema.changePassword, 'body'), userInfoController.changePassword);
-
+    
+    /**
+     * Routes for handling user search requests
+     */
+     Router.post("/user/searchMovie",validationMiddleware(userSearchMovieValidationSchema.search_movie, "body"), userSearchMovieController.getMovieByNameSearch);
+    //  Router.get("/user/recent-search", userSearchController.getAllVideoSearch);
+    //  Router.delete("/user/clear-search", userSearchController.clearSearchHistory);
     /**************************
      * END OF AUTHORIZED ROUTES
      **************************/
