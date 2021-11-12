@@ -13,7 +13,7 @@ const config = require('../../../config/environments');
 /**
  * Method to Compare password
  */
-let _comparePassword = (reqPassword, userPassword) => {
+let _comparePassword = (reqPassword, userPassword) => {    
     return new Promise((resolve, reject) => {
         //compare password with bcrypt method, password and hashed password both are required
         bcrypt.compare(reqPassword, userPassword, function(err, isMatch) {
