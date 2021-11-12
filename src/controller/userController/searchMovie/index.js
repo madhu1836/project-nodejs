@@ -25,7 +25,9 @@ module.exports = {
             responseData.data = getmovieSearch;
 
             let movieSearch= {
-                movie_name: reqObj.movie_name
+                movie_name: reqObj.movie_name,
+                movie_id: getmovieSearch[0]._id
+
             }
             let newSearchmovie = await searchDbHandler.createSearch(movieSearch);
             log.info('Movie Search created in the search history', newSearchmovie);
@@ -37,7 +39,7 @@ module.exports = {
             return responseHelper.error(res, responseData);
         }
     },
-    getAllmovieSearch: async (req, res) => {
+    getAllMovieSearch: async (req, res) => {
         let responseData = {};
         let user = req.user;
         let id = user.sub;
@@ -45,7 +47,7 @@ module.exports = {
         try {
             let getAllmovieSearch = await searchDbHandler.getSearchDetailsByQuery({}).sort({ 'created_at': -1 });
             if(!getAllmovieSearch){
-                responseData.msg= "No search exists";
+                responseData.msg= "No movie search exists";
                 return responseHelper.error(res, responseData);
             }
             responseData.msg = "Recent Searches fetched successfully!!!";

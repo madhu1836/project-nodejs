@@ -199,8 +199,8 @@ module.exports = () => {
      * Routes for handling user search requests
      */
      Router.post("/user/searchMovie",validationMiddleware(userSearchMovieValidationSchema.search_movie, "body"), userSearchMovieController.getMovieByNameSearch);
-    //  Router.get("/user/recent-search", userSearchController.getAllVideoSearch);
-    //  Router.delete("/user/clear-search", userSearchController.clearSearchHistory);
+     Router.get("/user/recent-searchMovies", userSearchMovieController.getAllMovieSearch);
+     Router.delete("/user/clear-search", userSearchMovieController.clearSearchHistory);
     /**************************
      * END OF AUTHORIZED ROUTES
      **************************/
