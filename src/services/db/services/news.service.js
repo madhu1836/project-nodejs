@@ -21,11 +21,11 @@ class News {
 		if (projection) {
 			return this._newsController.findOne({ _id: news_id }, projection);
 		}
-		return this._newsController.findOne({ _id: news_id });
+		return this._newsController.findOne({ _id: news_id }).populate('newsCategory_id');
 	}
 	getNewsDetailsByQuery(query,projection = {}){
 		
-		return this._newsController.find(query, projection);
+		return this._newsController.find(query, projection).populate('newsCategory_id');
 	}   
 	updateNewsDetailsById(news_id, updatedObj) {
 		return this._newsController.findByIdAndUpdate(news_id, { $set : updatedObj });
