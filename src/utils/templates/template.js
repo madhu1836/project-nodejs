@@ -13,7 +13,7 @@ module.exports = {
 		return templateBody; 
 	},
 	passwordReset: (data) => {
-		let templateBody = `<h2>Hey there,</h2><br>Click the link below to change your password!
+		let templateBody = `<h2>Hey ${data.name},</h2><br>Click the link below to change your password!
             <br><a style="text-decoration:none;line-height:100%;background:#7289DA;color:white;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:15px;font-weight:normal;text-transform:none;margin:0px;" target="_blank" href='${config.BaseUrl}/api/v1/reset/password/${data.token}'>Change Password</a>
             <br><p>This link will expire in 1 hour, so be sure to use it right away. Once you change your password, remember to log in again with your new password to continue using your account.
             If you did not make this request, please ignore this email.</p>
@@ -22,7 +22,7 @@ module.exports = {
 		return templateBody;
 	},
       otpVerification: (data) => {
-		let templateBody = `<h2>Hey there,</h2><br>Use the Otp below to verify yourself!!!
+		let templateBody = `<h2>Hey ${data.name},</h2><br>Use the Otp below to verify yourself!!!
             <br>Your OTP: ${data.otp}</br>
             <br><p>If you did not make this request, please ignore this email.</p></br>
             <br>Regards</br>

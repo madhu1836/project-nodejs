@@ -62,7 +62,7 @@ module.exports = () => {
     Router.post("/add-news", [multerService.uploadFile('file').single('news_image'), validationMiddleware(newsValidationSchema.add_news, "body")], adminNewsController.addNews);
     Router.get("/get-all-news", adminNewsController.getAllNews);
     Router.get("/get-news/:id", adminNewsController.getSingleNews);
-    Router.patch("/update-news/:id", [multerService.uploadFile('file').single('news_image'), validationMiddleware(newsValidationSchema.update_news, "body")], adminNewsController.updateNews);
+    Router.put("/update-news/:id", [multerService.uploadFile('file').single('news_image'), validationMiddleware(newsValidationSchema.update_news, "body")], adminNewsController.updateNews);
     Router.delete("/delete-news/:id", adminNewsController.deleteSingleNews);
     
     /**
