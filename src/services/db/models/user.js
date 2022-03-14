@@ -11,6 +11,15 @@ const userSchema = new Schema({
         type: String,
         trim: true,
     },
+    gender: {
+        type: String,
+        default: '',
+        enum: ['Male', 'Female', 'Others']
+    },
+    user_otp_verified: {
+        type: Boolean,
+        default: false,
+    },
     device_token: {
         type: String,
         default: ''

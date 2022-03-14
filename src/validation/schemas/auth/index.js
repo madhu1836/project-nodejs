@@ -16,6 +16,20 @@ module.exports = {
              .valid(Joi.ref('user_password'))
              .required()
              .error(new Error('Confirm password and user password must be same')),
+        gender: Joi.string().required().label("Gender")
+    }),
+    verifyOtp: Joi.object().keys({
+        otp: Joi.string().min(4).max(4).required().label('OTP'),
+    }),
+    forgotPassworEmail: Joi.object().keys({
+        user_email: Joi.string().email().required().label('Email'),
+    }),
+    resetPassword: Joi.object().keys({
+        new_password: Joi.string().min(6).required().label('New Password'), 
+        confirm_password: Joi.string()
+            .valid(Joi.ref('new_password'))
+            .required()
+            .error(new Error('Confirm password and password must be same')),
     }),
     socialLogin: Joi.object().keys({
         type: Joi.string().valid('google', 'facebook', 'apple').required().label('type'),
@@ -33,18 +47,6 @@ module.exports = {
     forgotPasswordMobile: Joi.object().keys({
         phone_number: Joi.number().min(10).required().label('Mobile Number'),
         app_type: Joi.string().required().label('App type')
-    }),
-    forgotPassworEmail: Joi.object().keys({
-        user_email: Joi.string().email().required().label('Email'),
-    }),
-    resetPassword: Joi.object().keys({
-        // token: Joi.string().trim().required().label('token'),
-        // type: Joi.string().trim().required().label('type'),
-        new_password: Joi.string().min(6).required().label('New Password'), 
-        confirm_password: Joi.string()
-            .valid(Joi.ref('new_password'))
-            .required()
-            .error(new Error('Confirm password and password must be same')),
     }),
     verifyEmail: Joi.object().keys({
         token: Joi.string().required().label('token'),

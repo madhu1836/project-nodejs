@@ -39,40 +39,19 @@ module.exports = () => {
         validationMiddleware(userValidationSchema.signup, 'body'),
         userAuthController.signup
     );
-    // Router.post(
-    //     '/user/forgot/password',
-    //     validationMiddleware(userValidationSchema.forgotPassword, 'body'),
-    //     userAuthController.forgotPassword
-    // );
-    // Router.post(
-    //     '/user/reset/password', [
-    //         validationMiddleware(userValidationSchema.resetPassword, 'body'),
-    //     ],
-    //     userAuthController.resetPassword
-    // );
-    // Router.post(
-    //     '/user/forgot/passwordMobile',
-    //     validationMiddleware(userValidationSchema.forgotPasswordMobile, 'body'),
-    //     userAuthController.forgotPasswordMobile
-    // );
     Router.post(
-        '/user/forgot/passwordEmail',
+        '/user/forgot-password',
         validationMiddleware(userValidationSchema.forgotPassworEmail, 'body'),
-        userAuthController.forgotPasswordByEmail
+        userAuthController.forgotPassword
     );
-
-
     Router.post(
-        '/user/forgot/verifyOtp',
-        validationMiddleware(userValidationSchema.verifyOtpForgotPassword, 'body'),
-        userAuthController.verifyOtp
-    );
-
-    Router.post(
-        '/user/forgot/resetPassword',
-        validationMiddleware(userValidationSchema.resetPassword, 'body'),
+        "/user/reset/password",
+        [
+          verificationAuthenticated,
+          validationMiddleware(userValidationSchema.resetPassword, "body"),
+        ],
         userAuthController.resetPassword
-    );
+      );
     Router.get(
         '/email/u/verification', [
             validationMiddleware(userValidationSchema.verifyEmail, 'query'),
@@ -80,17 +59,26 @@ module.exports = () => {
         ],
         userAuthController.verifyEmail
     );
+    /**
+     * Verify OTP
+     */
+    Router.post(
+        "/reg/otp/u/verification",
+        validationMiddleware(userValidationSchema.verifyOtp, "body"),
+        userAuthController.verifyOtpForPassword
+      );
 
-
-
-
+    // Router.post(
+    //     '/user/forgot/passwordMobile',
+    //     validationMiddleware(userValidationSchema.forgotPasswordMobile, 'body'),
+    //     userAuthController.forgotPasswordMobile
+    // );
 
     /**
      * Driver unautherised routes
      */
+    
     //  Router.post('/save_driver',[multerService.uploadFile('file').single('resume'),validationMiddleware(driverValidationSchema.saveDriver, 'body')],userDriverController.save_driver);
-
-
     /**
      * Social Login
      */
