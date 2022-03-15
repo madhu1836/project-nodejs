@@ -206,48 +206,46 @@ module.exports = {
             return responseHelper.error(res, responseData);
         }
     },
-/**
- * Verify OTP After Signup
- */
- verifyOtpForPassword: async(req, res) => {
-    let reQuery = req.query;
-    let otpTokenInfo = reQuery.token;
-    let reqBody = req.body;
-    log.info('Received request for email verification ::', otpTokenInfo);
-    let responseData = {};
-    try {
-        let query = {
-            token: otpTokenInfo,
-            verification_type: 'password',
-            otp: reqBody.otp
-        };
-        let otpInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
-        if (!otpInfo.length) {
-            responseData.msg = 'Invalid email OTP verification request or token expired or wrong otp';
+    verifyOtpForSignUp: async(req, res) => {
+        let reQuery = req.query;
+        let otpTokenInfo = reQuery.token;
+        let reqBody = req.body;
+        log.info('Received request for email verification ::', otpTokenInfo);
+        let responseData = {};
+        try {
+            let query = {
+                token: otpTokenInfo,
+                verification_type: 'email',
+                otp: reqBody.otp
+            };
+            let otpInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
+            if (!otpInfo.length) {
+                responseData.msg = 'Invalid email OTP verification request or token expired or wrong otp';
+                return responseHelper.error(res, responseData);
+            }
+            //update user email verification status
+            let userId = otpInfo[0].user_id;
+            let updateObj = {
+                user_otp_verified: true
+            };
+            let updatedUser = await userDbHandler.updateUserDetailsById(userId, updateObj);
+            if (!updatedUser) {
+                log.info('failed to verify user email');
+                responseData.msg = 'failed to verify email';
+                return responseHelper.error(res, responseData);
+            }
+            log.info('user email verification status updated successfully', updatedUser);
+            let removedTokenInfo = await _handleVerificationDataUpdate(otpInfo[0]._id);
+                log.info('password verification token has been removed::', removedTokenInfo);
+                responseData.msg = 'OTP verified successfully!';
+                return responseHelper.success(res, responseData);
+        } catch (error) {
+            log.error('failed to process mobile verification::', error);
+            responseData.msg = 'failed to verify user mobile';
             return responseHelper.error(res, responseData);
         }
-        //update user email verification status
-        let userId = otpInfo[0].user_id;
-        let updateObj = {
-            user_otp_verified: true
-        };
-        let updatedUser = await userDbHandler.updateUserDetailsById(userId, updateObj);
-        if (!updatedUser) {
-            log.info('failed to verify user email');
-            responseData.msg = 'failed to verify email';
-            return responseHelper.error(res, responseData);
-        }
-        log.info('user email verification status updated successfully', updatedUser);
-        // let removedTokenInfo = await _handleVerificationDataUpdate(otpInfo[0]._id);
-        //     log.info('password verification token has been removed::', removedTokenInfo);
-            responseData.msg = 'OTP verified successfully!';
-            return responseHelper.success(res, responseData);
-    } catch (error) {
-        log.error('failed to process mobile verification::', error);
-        responseData.msg = 'failed to verify user mobile';
-        return responseHelper.error(res, responseData);
-    }
-},
+    },
+
     /**
      * Method to handle forgot password
      */
@@ -335,6 +333,48 @@ module.exports = {
         return responseHelper.error(res,responseData);
     }
 },    
+    /**
+ * Verify OTP For Forgotpassword
+ */
+ verifyOtpForPassword: async(req, res) => {
+    let reQuery = req.query;
+    let otpTokenInfo = reQuery.token;
+    let reqBody = req.body;
+    log.info('Received request for email verification ::', otpTokenInfo);
+    let responseData = {};
+    try {
+        let query = {
+            token: otpTokenInfo,
+            verification_type: 'password',
+            otp: reqBody.otp
+        };
+        let otpInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
+        if (!otpInfo.length) {
+            responseData.msg = 'Invalid email OTP verification request or token expired or wrong otp';
+            return responseHelper.error(res, responseData);
+        }
+        //update user email verification status
+        let userId = otpInfo[0].user_id;
+        let updateObj = {
+            resetPassword_verified: true
+        };
+        let updatedUser = await userDbHandler.updateUserDetailsById(userId, updateObj);
+        if (!updatedUser) {
+            log.info('failed to verify user email');
+            responseData.msg = 'failed to verify email';
+            return responseHelper.error(res, responseData);
+        }
+        log.info('user email verification status updated successfully', updatedUser);
+        // let removedTokenInfo = await _handleVerificationDataUpdate(otpInfo[0]._id);
+        //     log.info('password verification token has been removed::', removedTokenInfo);
+            responseData.msg = 'OTP verified successfully!';
+            return responseHelper.success(res, responseData);
+    } catch (error) {
+        log.error('failed to process mobile verification::', error);
+        responseData.msg = 'failed to verify user mobile';
+        return responseHelper.error(res, responseData);
+    }
+},
     /**
      * Method to handle Reset Password
      */
@@ -435,47 +475,6 @@ module.exports = {
             return responseHelper.error(res, responseData);
         }
     },  
-    verifyOtp: async(req, res) => {
-        let reQuery = req.query;
-        let decodedEmailToken = reQuery.token;
-        let reqBody = req.body;
-        log.info('Received request for otp verification ::', decodedEmailToken);
-        let responseData = {};
-        try {
-            let query = {
-                token: decodedEmailToken,
-                verification_type: 'email',
-                otp: reqBody.otp
-            };
-            let verificationInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
-            if (!verificationInfo.length) {
-                responseData.msg = 'Invalid email verification request or token expired or wrong otp';
-                return responseHelper.error(res, responseData);
-            }
-            //update user email verification status
-            let userId = verificationInfo[0].user_id;
-            let updateObj = {
-                user_email_verified: true
-            };
-            let updatedUser = await userDbHandler.updateUserDetailsById(userId, updateObj);
-            if (!updatedUser) {
-                log.info('failed to verify otp');
-                responseData.msg = 'failed to verify otp';
-                return responseHelper.error(res, responseData);
-            }
-            log.info('user email verification status updated successfully', updatedUser);
-            verificationInfo[0].otp = "";
-            let updatedVerificationInfo = await verificationInfo[0].save();
-            // let removedTokenInfo = await _handleVerificationDataUpdate(mobileInfo[0]._id);
-            // log.info('mobile verification token has been removed::',removedTokenInfo);
-            responseData.msg = 'Otp verified verified successfully';
-            responseData.data = { token: updatedVerificationInfo.token, type: updatedVerificationInfo.verification_type }
-            return responseHelper.success(res, responseData);
-        } catch (error) {
-            log.error('failed to process email verification::', error);
-            responseData.msg = 'failed to verify Otp';
-            return responseHelper.error(res, responseData);
-        }
-    },
+
     
 };

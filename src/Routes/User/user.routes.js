@@ -40,10 +40,23 @@ module.exports = () => {
         userAuthController.signup
     );
     Router.post(
+        "/verify-otp-for-signup",
+        validationMiddleware(userValidationSchema.verifyOtp, "body"),
+        userAuthController.verifyOtpForSignUp
+      );
+    Router.post(
         '/user/forgot-password',
         validationMiddleware(userValidationSchema.forgotPassworEmail, 'body'),
         userAuthController.forgotPassword
     );
+    /**
+     * Verify OTP
+     */
+     Router.post(
+        "/verify-otp-forgot-password",
+        validationMiddleware(userValidationSchema.verifyOtp, "body"),
+        userAuthController.verifyOtpForPassword
+      );
     Router.post(
         "/user/reset/password",
         [
@@ -59,14 +72,6 @@ module.exports = () => {
         ],
         userAuthController.verifyEmail
     );
-    /**
-     * Verify OTP
-     */
-    Router.post(
-        "/reg/otp/u/verification",
-        validationMiddleware(userValidationSchema.verifyOtp, "body"),
-        userAuthController.verifyOtpForPassword
-      );
 
     // Router.post(
     //     '/user/forgot/passwordMobile',

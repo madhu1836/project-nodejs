@@ -7,7 +7,26 @@ const config = require('../../../config/environments');
  * Creating User Schema Model
  */
 const userSchema = new Schema({
+
+    profile_picture: {
+        type: String,
+        default: '',
+    },
     name: {
+        type: String,
+        trim: true,
+    },
+    user_email: {
+        type: String,
+        required: true,
+        trim: true,
+    },
+    user_password: {
+        type: String,
+        default: '',
+        trim: true,
+    },
+    phone_number: {
         type: String,
         trim: true,
     },
@@ -20,6 +39,18 @@ const userSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    resetPassword_verified: {
+        type: Boolean,
+        default: false,
+    },
+    // user_email_verified: {
+    //     type: Boolean,
+    //     default: false,
+    // },
+    // user_phone_verified: {
+    //     type: Boolean,
+    //     default: false,
+    // },
     device_token: {
         type: String,
         default: ''
@@ -33,36 +64,10 @@ const userSchema = new Schema({
         type: String,
         default: ''
     },
-    user_email: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    user_password: {
-        type: String,
-        default: '',
-        trim: true,
-    },
-    user_email_verified: {
-        type: Boolean,
-        default: false,
-    },
-    phone_number: {
-        type: String,
-        trim: true,
-    },
-    user_phone_verified: {
-        type: Boolean,
-        default: false,
-    },
     login_way: {
         type: String,
         enum: ['local', 'facebook', 'google', 'apple'],
         default: 'local',
-    },
-    profile_picture: {
-        type: String,
-        default: '',
     },
     // user_bio: {
     //     type: String,
