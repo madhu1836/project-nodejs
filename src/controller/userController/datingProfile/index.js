@@ -18,30 +18,53 @@ module.exports={
         // console.log("ID===>",id);
         let reqObj = req.body;
         try {
-            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({ profile_email: reqObj.profile_email });
+            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id: { $ne: id}});
             if (getProfileDetailsByQuery.length) {
                 responseData.msg = "Your dating profile already exist";
                 return responseHelper.error(res, responseData);
             }
 
-            let fileLocation = '';
+            let filelocation = [];
+            // console.log("========>", req.files)
+            
+            if (!req.file && !req.files.pictures) {
+                responseData.msg = "Failed to upload pictures";
+                return responseHelper.error(res, responseData);
+        }
 
-            if (req.file) {
-                fileLocation = req.file.location;
+            if (req.files && req.files.pictures) {
+                for (let i = 0; i < req.files.pictures.length; i++) {
+                    filelocation.push(req.files.pictures[i].location);
+                }
             }
+            let addressObj = {
+				city: reqObj.city,
+                country: reqObj.country,
+			}
+            const response = {
+				address: addressObj
+			};
+            // let coords = [+reqObj.longitude, +reqObj.latitude];
+			// console.log("==========>",response);
             let Data = {
-                profile_image: fileLocation,
-                name: reqObj.name,
-                bio: reqObj.bio,
-                gender: reqObj.gender,
-                profile_email : reqObj.profile_email,
-                user_id: id
+                pictures: filelocation,
+                age: reqObj.age,
+                height: reqObj.height,
+                weight: reqObj.weight,
+                looking_for: reqObj.looking_for,
+                about: reqObj.about,
+                address: addressObj,
+				// loc: {
+				// 	type: 'Point',
+				// 	coordinates: coords,
+                // },
+                user_id: id,
             }
             let userProfile = await userDbHandler.getUserDetailsById(id)
-            if(userProfile.user_email != reqObj.profile_email){
-                responseData.msg = "Email should be same as you profile email!!!";
-                return responseHelper.success(res, responseData);
-            }
+            // if(userProfile.user_email != reqObj.profile_email){
+            //     responseData.msg = "Email should be same as you profile email!!!";
+            //     return responseHelper.success(res, responseData);
+            // }
 
             let newProfile = await datingDbHandler.createProfile(Data);
             responseData.msg = "Dating profile created successfully!!!";
@@ -56,37 +79,42 @@ module.exports={
         let responseData = {};
         let user = req.user;
         let id = user.sub;
-        // let id = admin.sub;
-        // console.log("ID===>", id);
         let reqObj = req.body;
         try {
-            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({ profile_email: reqObj.profile_email });
+            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id: { $ne: id}});
             if (!getProfileDetailsByQuery) {
                 responseData.msg = "Dating profile does not exist";
                 return responseHelper.error(res, responseData);
             }
-
-            let fileLocation = '';
-
-            if (req.file) {
-                fileLocation = req.file.location;
+            let oldphotos = getProfileDetailsByQuery.pictures;
+            oldphotos = [];
+            let filelocation = [];
+            if (req.files && req.files.pictures) {
+                for (let i = 0; i < req.files.pictures.length; i++) {
+                    filelocation.push(req.files.pictures[i].location);
+                }
             }
+            // let fileLocation = '';
+            // if (req.file) {
+            //     fileLocation = req.file.location;
+            // }
+            // if(req.files && req.files.fileLocation){
+            //     reqObj.fileLocation = req.files.fileLocation[0].location
+            // }
+            // let updateData = {
+            //     profile_image: fileLocation,
+            //     name: reqObj.name,
+            //     bio: reqObj.bio,
+            //     profile_email : reqObj.profile_email,
+            //     gender: reqObj.gender
+            // }
+            // let userProfile = await userDbHandler.getUserDetailsById(id)
+            // if(userProfile.user_email != reqObj.profile_email){
+            //     responseData.msg = "Email should be same as you profile email!!!";
+            //     return responseHelper.success(res, responseData);
+            // }
 
-            let updateData = {
-                profile_image: fileLocation,
-                name: reqObj.name,
-                bio: reqObj.bio,
-                profile_email : reqObj.profile_email,
-                gender: reqObj.gender
-            }
-            let userProfile = await userDbHandler.getUserDetailsById(id)
-            if(userProfile.user_email != reqObj.profile_email){
-                responseData.msg = "Email should be same as you profile email!!!";
-                return responseHelper.success(res, responseData);
-            }
-
-            let updatingData = await datingDbHandler.updateProfileByQuery( {profile_email: reqObj.profile_email}, updateData);
-            let updatedData = await datingDbHandler.getProfileDetailsByQuery({ profile_email: reqObj.profile_email })
+            let updatingData = await datingDbHandler.updateProfileByQuery(id,reqObj);
             responseData.msg = "Dating profile updated successfully!!!";
             return responseHelper.success(res, responseData);
         } catch (error) {
@@ -103,7 +131,7 @@ module.exports={
         let reqObj = req.body;
         try {
             
-            let getProfileList = await datingDbHandler.getProfileDetailsByQuery({ user_id: { $ne: id }, gender: reqObj.gender})
+            let getProfileList = await datingDbHandler.getProfileDetailsByQuery({ $and: [ {age: reqObj.age}, {height: reqObj.height},{weight: reqObj.weight} ] })
             if (!getProfileList.length) {
                 responseData.msg = "Dating profile does not exist";
                 return responseHelper.error(res, responseData);

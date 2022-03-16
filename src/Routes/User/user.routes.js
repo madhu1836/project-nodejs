@@ -10,15 +10,21 @@ const userDatingController = require('../../controller').userDating;
 const userMoviesCategoryController = require('../../controller').userMoviesCategory;
 const userMoviesController = require('../../controller').userMovies;
 const userSearchMovieController = require('../../controller').userSearchMovie;
+const contactUsController = require('../../controller').contactUs;
 /**
  * All Middlewares
  */
 const userAuthenticated = require('../../services/middleware/userAuthenticate');
 const verificationAuthenticated = require('../../services/middleware/verification');
+
+
 const userValidationSchema = require('../../validation').authSchema;
 const userInfoValidationSchema = require('../../validation').userInfoSchema;
 const userDatingValidationSchema = require('../../validation').datingProfileSchema;
 const userSearchMovieValidationSchema = require('../../validation').searchMovieSchema;
+const contactUsValidationSchema = require('../../validation').contactUsSchema;
+
+
 const validationMiddleware = require('../../utils/validationMiddleware');
 const multerService = require('../../services/multer');
 module.exports = () => {
@@ -143,7 +149,11 @@ module.exports = () => {
      * Middlerware for Handling Request Authorization
      */
     Router.use('/', userAuthenticated);
-
+    
+    /*
+    Routes To Handle ContactUs
+     */
+    Router.post('/contact-us',validationMiddleware(contactUsValidationSchema.create, 'body'), contactUsController.create);
     /**
      * Routes for handling user profile
      */
@@ -164,8 +174,8 @@ module.exports = () => {
     /**
      * Routes for handling dating profile requests
      */
-    Router.post('/user/dating/createProfile',[multerService.uploadFile('file').single('profile_image'), validationMiddleware(userDatingValidationSchema.create_profile, 'body')], userDatingController.createDatingProfile);
-    Router.put('/user/dating/updateProfile',[multerService.uploadFile('file').single('profile_image'), validationMiddleware(userDatingValidationSchema.update_profile, 'body')], userDatingController.updateDatingProfile);
+    Router.post('/user/dating/createProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:15}]), validationMiddleware(userDatingValidationSchema.create_profile, 'body')], userDatingController.createDatingProfile);
+    Router.put('/user/dating/updateProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:15}]), validationMiddleware(userDatingValidationSchema.update_profile, 'body')], userDatingController.updateDatingProfile);
     Router.post('/user/dating/get-all-profiles', userDatingController.getAllProfiles);
     Router.get('/user/dating/get-profile/:id', userDatingController.getSingleProfileById);
     Router.delete('/user/dating/delete-profile/:id', userDatingController.deleteDatingProfile);    

@@ -4,8 +4,8 @@
 module.exports = {
     // databaseUrl: 'mongodb+srv://admin:admin123@cluster0.5jwzc.mongodb.net/youth_dev?authSource=admin',
     databaseUrl: 'mongodb://webmobril:wemobril1234@52.205.200.232:27017/youth_dev?authSource=admin',
-    BaseUrl: 'http://localhost:7000',
-    // BaseUrl: 'http://44.195.125.80:7000',
+    // BaseUrl: 'http://localhost:7000',
+    BaseUrl: 'http://44.195.125.80:7000',
     jwtTokenInfo: {
         secretKey: '9889D22341540031D3386132A7BDD38F4830474543C795D019561C0A308F502B',
         issuer: 'Youth',

@@ -69,6 +69,18 @@ const userSchema = new Schema({
         enum: ['local', 'facebook', 'google', 'apple'],
         default: 'local',
     },
+    address: {
+        type: String,
+        default:''
+    },
+    loc: {
+        type: {
+            type: String,
+            enum: ['Point'], // 'location.type' must be 'Point'[lng,lat]
+            default: 'Point',
+        },
+        coordinates: { type: [], default: [0.0000, 0.0000] },
+    },
     // user_bio: {
     //     type: String,
     //     default: '',

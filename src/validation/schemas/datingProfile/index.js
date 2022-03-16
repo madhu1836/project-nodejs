@@ -7,50 +7,58 @@ const Joi = JoiBase.extend(JoiDate);
  */
 module.exports = {
 	create_profile: Joi.object().keys({
-        profile_image:Joi
+        pictures:Joi
             .string()
             .label("Profile Image"),
-        name: Joi
+        age: Joi
+			.number()
+            .required()
+			.label("Age"),
+        height: Joi
 			.string()
             .required()
-			.label("Name"),
-        bio: Joi
-            .string()
-            .optional()
-            .allow("")
-            .label("Your Bio"),
-        profile_email: Joi
+			.label("Height"),
+        weight: Joi
+			.number()
+            .required()
+			.label("Weight"),
+        looking_for: Joi
             .string()
             .required()
-            .label("Your Email"),
-        gender: Joi
-            .string()
-            .required()
-            .valid("male", "female")
-            .label('Gender'),   
+            .valid("male", "female", "others")
+            .label('Gender'),  
+        about: Joi.string().required().label("About"),
+        city: Joi.string().trim().label('City'), 
+        country: Joi.string().trim().label("Country"),
+        // latitude: Joi.string().label('Latitude'),
+        // longitude: Joi.string().label('Longitude')
     }),
     update_profile: Joi.object().keys({
-        profile_image:Joi
+        pictures:Joi
             .string()
             .label("Profile Image"),
-        name: Joi
+        age: Joi
+			.number()
+            .required()
+			.label("Age"),
+        height: Joi
 			.string()
             .required()
-			.label("Name"),
-        gender: Joi
+			.label("Height"),
+        weight: Joi
+			.number()
+            .required()
+			.label("Weight"),
+        looking_for: Joi
             .string()
             .required()
-            .valid("male", "female")
-            .label('Gender'),
-        profile_email: Joi
-            .string()
-            .required()
-            .label("Your Email"),
-        bio: Joi
-            .string()
-            .optional()
-            .allow("")
-            .label("Your Bio")
+            .valid("male", "female", "others")
+            .label('Gender'), 
+        about: Joi.string().required().label("About"),
+        city: Joi.string().trim().label('City'),
+        country: Joi.string().trim().label("Country"),
+        // latitude: Joi.string().label('Latitude'),
+        // longitude: Joi.string().label('Longitude')
 	}),
 
 };
