@@ -31,7 +31,6 @@ const staticContentvalidationSchema = require('../../validation').staticContent;
 
 
 module.exports = () => {
-
     /**
      * Login Route
      */
@@ -65,7 +64,7 @@ module.exports = () => {
     Router.delete('/delete-message/:id',adminContactUsController.delete);
      
     /**
-       * Routes To handle Static content
+      * Routes To handle Static content
     */
     Router.post("/add-static-content", validationMiddleware(staticContentvalidationSchema.create, "body"),adminStaticContentController.create);
     Router.get("/get-static-content/:id", adminStaticContentController.getSingle);
@@ -76,8 +75,8 @@ module.exports = () => {
     /**
      * Routes for handling dating profile requests
      */
-     Router.post('/dating/createProfile/:id',[multerService.uploadFile('file').single('profile_image'), validationMiddleware(adminDatingValidationSchema.create_profile, 'body')], adminDatingController.createDatingProfile);
-     Router.put('/dating/updateProfile/:id',[multerService.uploadFile('file').single('profile_image'), validationMiddleware(adminDatingValidationSchema.update_profile, 'body')], adminDatingController.updateDatingProfile);
+     Router.post('/dating/createProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(adminDatingValidationSchema.create_profile, 'body')], adminDatingController.createDatingProfile);
+     Router.put('/dating/updateProfile/:id',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(adminDatingValidationSchema.update_profile, 'body')], adminDatingController.updateDatingProfile);
      Router.get('/dating/get-all-profiles', adminDatingController.getAllProfiles);
      Router.get('/dating/get-profile/:id', adminDatingController.getSingleProfileById);
      Router.delete('/dating/delete-profile/:id', adminDatingController.deleteDatingProfile);  
@@ -86,16 +85,15 @@ module.exports = () => {
     /**
      * Middlerware for Handling Request News Categories
      */
-   
      Router.post("/add-newsCategory", validationMiddleware(newsCategoryValidationSchema.add_newsCategory, "body"),adminNewsCategoryController.Add_NewsCategory);
      Router.get("/get-newsCategory/:id", adminNewsCategoryController.getSingleNewsCategory);
      Router.get("/get-all-newsCategory", adminNewsCategoryController.getAllcategory);
      Router.put("/update-newsCategory/:id", validationMiddleware(newsCategoryValidationSchema.update_newsCategory, "body"),adminNewsCategoryController.updateNewsCategory);
      Router.delete("/delete-newsCategory/:id",adminNewsCategoryController.deleteNewsCategory);
+
     /**
      * Routes for Handling News Request
      */
-    
     Router.post("/add-news", [multerService.uploadFile('file').single('news_image'), validationMiddleware(newsValidationSchema.add_news, "body")], adminNewsController.addNews);
     Router.get("/get-all-news", adminNewsController.getAllNews);
     Router.get("/get-news/:id", adminNewsController.getSingleNews);
@@ -105,12 +103,12 @@ module.exports = () => {
      /**
      * Middlerware for Handling Request Movies Categories
      */
-   
       Router.post("/add-moviesCategory", multerService.uploadFile('file').single('category_thumbnail'), validationMiddleware(moviesCategoryValidationSchema.add_noviesCategory, "body"),adminMoviesCategoryController.Add_MoviesCategory);
       Router.get("/get-moviesCategory/:id", adminMoviesCategoryController.getSingleMovieCategory);
       Router.get("/get-all-moviesCategory", adminMoviesCategoryController.getAllcategories);
       Router.put("/update-moviesCategory/:id", validationMiddleware(moviesCategoryValidationSchema.update_moviesCategory, "body"),adminMoviesCategoryController.updateMovieCategory);
       Router.delete("/delete-moviesCategory/:id",adminMoviesCategoryController.deleteMoviesCategory);
+      
     /**
      * Routes for Handling Movies Request
      */

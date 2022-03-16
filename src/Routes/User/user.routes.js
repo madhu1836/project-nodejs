@@ -32,14 +32,16 @@ module.exports = () => {
      * START UNAUTHORIZED ROUTES
      ***************************/
     /*
-     **Login and Signup Route
+     **Login Route
      */
     Router.post(
         '/user/login',
         validationMiddleware(userValidationSchema.login, 'body'),
         userAuthController.login
     );
-
+    /**
+     * SignUp Route
+     */
     Router.post(
         '/user/signup',
         validationMiddleware(userValidationSchema.signup, 'body'),
@@ -78,7 +80,6 @@ module.exports = () => {
         ],
         userAuthController.verifyEmail
     );
-
     // Router.post(
     //     '/user/forgot/passwordMobile',
     //     validationMiddleware(userValidationSchema.forgotPasswordMobile, 'body'),
@@ -154,41 +155,45 @@ module.exports = () => {
     Routes To Handle ContactUs
      */
     Router.post('/contact-us',validationMiddleware(contactUsValidationSchema.create, 'body'), contactUsController.create);
+
     /**
      * Routes for handling user profile
      */
     Router.get('/user/profile', userInfoController.profile);
     Router.put('/user/update_profile', [multerService.uploadFile('file').single('profile_picture'), validationMiddleware(userInfoValidationSchema.updateProfile, 'body')], userInfoController.updateProfile);
+
+    /**
+    * Routes for handling Dating profile 
+    */
+    Router.post('/user/dating/createProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(userDatingValidationSchema.create_profile, 'body')], userDatingController.createDatingProfile);
+    Router.put('/user/dating/updateProfile/:id',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(userDatingValidationSchema.update_profile, 'body')], userDatingController.updateDatingProfile);
+    Router.post('/user/dating/get-all-profiles', userDatingController.getAllProfiles);
+    Router.get('/user/get-all-dating-profiles', userDatingController.getAllDatingProfiles);
+    Router.get('/user/dating/get-profile/:id', userDatingController.getSingleProfileById);
+    Router.delete('/user/dating/delete-profile/:id', userDatingController.deleteDatingProfile);
+
     /**
     * Routes for handling user news category requests
     */
     Router.get('/user/get-newsCategory/:id', userNewsCategoryController.getSingleNewsCategory);
     Router.get('/user/get-all-newsCategory', userNewsCategoryController.getAllNewsCategory);
+
     /**
      * Routes for handling user news requests
      */
-
     Router.get('/user/get-news/:id', userNewsController.getSingleNews);
     Router.get('/user/get-all-news-by-category/:newsCategory_id', userNewsController.getAllNewsByCategory);
     Router.get('/user/get-all-news', userNewsController.getAllNews);
+
     /**
-     * Routes for handling dating profile requests
-     */
-    Router.post('/user/dating/createProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:15}]), validationMiddleware(userDatingValidationSchema.create_profile, 'body')], userDatingController.createDatingProfile);
-    Router.put('/user/dating/updateProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:15}]), validationMiddleware(userDatingValidationSchema.update_profile, 'body')], userDatingController.updateDatingProfile);
-    Router.post('/user/dating/get-all-profiles', userDatingController.getAllProfiles);
-    Router.get('/user/dating/get-profile/:id', userDatingController.getSingleProfileById);
-    Router.delete('/user/dating/delete-profile/:id', userDatingController.deleteDatingProfile);    
-     /**
      * Middlerware for Handling Request Movies Categories
-     */
-   
+    */
       Router.get("/user/get-moviesCategory/:id", userMoviesCategoryController.getSingleMovieCategory);
       Router.get("/user/get-all-moviesCategory", userMoviesCategoryController.getAllcategories);
-      /**
+
+    /**
      * Routes for Handling Movies Request
-     */
-    
+    */
     Router.get("/user/get-all-movies", userMoviesController.getAllMovies);
     Router.get("/user/get-movie/:id", userMoviesController.getSingleMovie);
     Router.get("/user/get-movies-by/:category_id", userMoviesController.getMoviesByCategoryId);

@@ -18,20 +18,17 @@ module.exports={
         // console.log("ID===>",id);
         let reqObj = req.body;
         try {
-            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id: { $ne: id}});
+            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id: { $eq: id}});
             if (getProfileDetailsByQuery.length) {
                 responseData.msg = "Your dating profile already exist";
                 return responseHelper.error(res, responseData);
             }
 
-            let filelocation = [];
-            // console.log("========>", req.files)
-            
+            let filelocation = [];    
             if (!req.file && !req.files.pictures) {
                 responseData.msg = "Failed to upload pictures";
                 return responseHelper.error(res, responseData);
         }
-
             if (req.files && req.files.pictures) {
                 for (let i = 0; i < req.files.pictures.length; i++) {
                     filelocation.push(req.files.pictures[i].location);
@@ -54,18 +51,12 @@ module.exports={
                 looking_for: reqObj.looking_for,
                 about: reqObj.about,
                 address: addressObj,
-				// loc: {
+				// location: {
 				// 	type: 'Point',
 				// 	coordinates: coords,
                 // },
                 user_id: id,
             }
-            let userProfile = await userDbHandler.getUserDetailsById(id)
-            // if(userProfile.user_email != reqObj.profile_email){
-            //     responseData.msg = "Email should be same as you profile email!!!";
-            //     return responseHelper.success(res, responseData);
-            // }
-
             let newProfile = await datingDbHandler.createProfile(Data);
             responseData.msg = "Dating profile created successfully!!!";
             return responseHelper.success(res, responseData);
@@ -94,6 +85,13 @@ module.exports={
                     filelocation.push(req.files.pictures[i].location);
                 }
             }
+            let addressObj = {
+				city: reqObj.city,
+                country: reqObj.country,
+			}
+            const response = {
+				address: addressObj
+			};
             // let fileLocation = '';
             // if (req.file) {
             //     fileLocation = req.file.location;
@@ -101,20 +99,23 @@ module.exports={
             // if(req.files && req.files.fileLocation){
             //     reqObj.fileLocation = req.files.fileLocation[0].location
             // }
-            // let updateData = {
-            //     profile_image: fileLocation,
-            //     name: reqObj.name,
-            //     bio: reqObj.bio,
-            //     profile_email : reqObj.profile_email,
-            //     gender: reqObj.gender
-            // }
+            let updateData = {
+                pictures: filelocation,
+                age: reqObj.age,
+                height: reqObj.height,
+                weight: reqObj.weight,
+                looking_for: reqObj.looking_for,
+                about: reqObj.about,
+                address: addressObj,
+                user_id: id,
+            }
             // let userProfile = await userDbHandler.getUserDetailsById(id)
             // if(userProfile.user_email != reqObj.profile_email){
             //     responseData.msg = "Email should be same as you profile email!!!";
             //     return responseHelper.success(res, responseData);
             // }
 
-            let updatingData = await datingDbHandler.updateProfileByQuery(id,reqObj);
+            let updatingData = await datingDbHandler.updateProfileDetailsById(id,updateData,);
             responseData.msg = "Dating profile updated successfully!!!";
             return responseHelper.success(res, responseData);
         } catch (error) {
@@ -127,10 +128,8 @@ module.exports={
         let responseData = {};
         let user = req.user;
         let id = user.sub;
-
         let reqObj = req.body;
-        try {
-            
+        try {  
             let getProfileList = await datingDbHandler.getProfileDetailsByQuery({ $and: [ {age: reqObj.age}, {height: reqObj.height},{weight: reqObj.weight} ] })
             if (!getProfileList.length) {
                 responseData.msg = "Dating profile does not exist";
@@ -138,8 +137,27 @@ module.exports={
             }
                 responseData.msg = "Data Fetched Successfully !!!"; 
                 responseData.data = getProfileList;
-                return responseHelper.success(res, responseData);
-            
+                return responseHelper.success(res, responseData);        
+        } catch (error) {
+            log.error('failed to fetch profiles with error::', error);
+            responseData.msg = 'failed to fetch profiles';
+            return responseHelper.error(res, responseData);
+        }
+    },
+    getAllDatingProfiles: async (req, res) => {
+        let responseData = {};
+        let user = req.user;
+        let id = user.sub;
+        let reqObj = req.body;
+        try {   
+            let getProfileList = await datingDbHandler.getProfileDetailsByQuery({})
+            if (!getProfileList.length) {
+                responseData.msg = "Dating profile does not exist";
+                return responseHelper.error(res, responseData);
+            }
+                responseData.msg = "Data Fetched Successfully !!!"; 
+                responseData.data = getProfileList;
+                return responseHelper.success(res, responseData);    
         } catch (error) {
             log.error('failed to fetch profiles with error::', error);
             responseData.msg = 'failed to fetch profiles';
@@ -150,7 +168,7 @@ module.exports={
     getSingleProfileById: async (req, res) => {
         let responseData = {};
         let user = req.user;
-        let id = req.query.id;
+        let id = req.params.id;
         try {
             let getProfile = await datingDbHandler.getProfileDetailsById(id);
             if (!getProfile) {
@@ -171,7 +189,7 @@ module.exports={
     deleteDatingProfile: async (req, res) => {
         let responseData = {};
         let user = req.user;
-        let id = req.query.id;
+        let id = req.params.id;
         try {
             let getProfile = await datingDbHandler.getProfileDetailsById(id);
             if(!getProfile){
