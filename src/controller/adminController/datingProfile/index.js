@@ -19,7 +19,7 @@ module.exports={
         // console.log("ID===>",id);
         let reqObj = req.body;
         try {
-            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id:{$eq: id}});
+            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id:{$ne: id}});
             if (getProfileDetailsByQuery.length) {
                 responseData.msg = "This dating profile already exist";
                 return responseHelper.error(res, responseData);
@@ -82,10 +82,10 @@ module.exports={
     updateDatingProfile: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
-        let id = req.query.id;
+        let id = req.params.id;
         let reqObj = req.body;
         try {
-            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({});
+            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id: {$ne: id}});
             if (!getProfileDetailsByQuery.length) {
                 responseData.msg = "Dating profile does not exist";
                 return responseHelper.error(res, responseData);
@@ -99,24 +99,33 @@ module.exports={
                     filelocation.push(req.files.pictures[i].location);
                 }
             }
-            // let updateData = {
-            //     profile_image: fileLocation,
-            //     name: reqObj.name,
-            //     bio: reqObj.bio,
-            //     profile_email : reqObj.profile_email,
-            //     gender: reqObj.gender
-            // }
-            let userProfile = await userDbHandler.getUserDetailsById(id)
-            if(!userProfile){
-                responseData.msg = "User does not exist";
-                return responseHelper.success(res, responseData);
+            let addressObj = {
+				city: reqObj.city,
+                country: reqObj.country,
+			}
+            const response = {
+				address: addressObj
+			};
+            let updateData = {
+                pictures: filelocation,
+                age: reqObj.age,
+                height: reqObj.height,
+                weight: reqObj.weight,
+                looking_for: reqObj.looking_for,
+                about: reqObj.about,
+                address: addressObj,
             }
+            // let userProfile = await userDbHandler.getUserDetailsById(id)
+            // if(!userProfile){
+            //     responseData.msg = "User does not exist";
+            //     return responseHelper.success(res, responseData);
+            // }
             // if(userProfile.user_email != reqObj.profile_email){
             //     responseData.msg = "Email should be same as you profile email!!!";
             //     return responseHelper.success(res, responseData);
             // }
             let updatingData = await datingDbHandler.updateProfileDetailsById(id, updateData);
-            let updatedData = await datingDbHandler.getProfileDetailsByQuery({ profile_email: reqObj.profile_email })
+            // let updatedData = await datingDbHandler.getProfileDetailsByQuery({ profile_email: reqObj.profile_email })
             responseData.msg = "Dating profile updated successfully!!!";
             return responseHelper.success(res, responseData);
         } catch (error) {
@@ -148,7 +157,7 @@ module.exports={
     getSingleProfileById: async (req, res) => { 
         let responseData = {};
         let admin = req.admin;
-        let id = req.query.id;
+        let id = req.params.id;
         try {
             let getProfile = await datingDbHandler.getProfileDetailsById(id);
             if (!getProfile) {
@@ -189,7 +198,7 @@ module.exports={
     deleteDatingProfile: async (req, res) => {
         let responseData = {};
         let admin = req.admin;
-        let id =req.query.id
+        let id =req.params.id
         try {
             let getProfile = await datingDbHandler.getProfileDetailsById(id);
             if(!getProfile){

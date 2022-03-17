@@ -171,6 +171,7 @@ module.exports = {
                 OTP += digits[Math.floor(Math.random() * 10)];
             }
             let otpBody = {
+                name: newUser.name,
                 otp: OTP,
                 type: verificationType,
                 token: emailVerificationToken,
@@ -302,6 +303,7 @@ module.exports = {
             }
             //patch email verification templateBody
             let templateBody = {
+                name:userData[0].name,
                 type: verificationType,
                 otp : OTP,
                 token: passwordResetToken
@@ -399,13 +401,13 @@ resetPassword: async(req, res) => {
         // if(userDetail.password) {
         //     let comparePassword = await _comparePassword(newPassword, userDetail.password);
         // }
-        // let comparePassword = await _comparePassword(newPassword, userDetail.password);
-        // console.log("compare_password===>",comparePassword);
-        // if (comparePassword) {
-        //     log.error('Use old password:', newPassword);
-        //     responseData.msg = 'new password can not be same as old password';
-        //     return responseHelper.error(res, responseData);
-        // }
+        let comparePassword = await _comparePassword(newPassword, userDetail.user_password);
+        console.log("compare_password===>",comparePassword);
+        if (comparePassword) {
+            log.error('Use old password:', newPassword);
+            responseData.msg = 'new password can not be same as old password';
+            return responseHelper.error(res, responseData);
+        }
         
         if(!userDetail.resetPassword_verified) {
             log.error('Please verify your OTP',userDetail[0].resetPassword_verified);
