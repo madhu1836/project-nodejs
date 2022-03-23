@@ -28,8 +28,8 @@ module.exports = {
             .valid("male", "female", "others")
             .label('Gender'),  
         about: Joi.string().required().label("About"),
-        city: Joi.string().trim().label('City'), 
-        country: Joi.string().trim().label("Country"),
+        // city: Joi.string().trim().label('City'), 
+        // country: Joi.string().trim().label("Country"),
         // latitude: Joi.string().label('Latitude'),
         // longitude: Joi.string().label('Longitude')
     }),
@@ -55,8 +55,8 @@ module.exports = {
             .valid("male", "female", "others")
             .label('Gender'), 
         about: Joi.string().required().label("About"),
-        city: Joi.string().trim().label('City'),
-        country: Joi.string().trim().label("Country"),
+        // city: Joi.string().trim().label('City'),
+        // country: Joi.string().trim().label("Country"),
         // latitude: Joi.string().label('Latitude'),
         // longitude: Joi.string().label('Longitude')
 	}),

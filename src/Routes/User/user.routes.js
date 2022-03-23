@@ -11,61 +11,78 @@ const userMoviesCategoryController = require('../../controller').userMoviesCateg
 const userMoviesController = require('../../controller').userMovies;
 const userSearchMovieController = require('../../controller').userSearchMovie;
 const contactUsController = require('../../controller').contactUs;
+const staticContentController = require('../../controller').staticContent;
+
 /**
  * All Middlewares
  */
 const userAuthenticated = require('../../services/middleware/userAuthenticate');
 const verificationAuthenticated = require('../../services/middleware/verification');
+const validationMiddleware = require('../../utils/validationMiddleware');
+const multerService = require('../../services/multer');
 
-
+/**
+ * Validation
+ */
 const userValidationSchema = require('../../validation').authSchema;
 const userInfoValidationSchema = require('../../validation').userInfoSchema;
 const userDatingValidationSchema = require('../../validation').datingProfileSchema;
 const userSearchMovieValidationSchema = require('../../validation').searchMovieSchema;
 const contactUsValidationSchema = require('../../validation').contactUsSchema;
 
-
-const validationMiddleware = require('../../utils/validationMiddleware');
-const multerService = require('../../services/multer');
 module.exports = () => {
     /***************************
      * START UNAUTHORIZED ROUTES
      ***************************/
     /*
-     **Login Route
-     */
-    Router.post(
+     *Login Route
+     **/
+      Router.post(
         '/user/login',
         validationMiddleware(userValidationSchema.login, 'body'),
         userAuthController.login
     );
+
     /**
      * SignUp Route
-     */
-    Router.post(
+     **/
+      Router.post(
         '/user/signup',
         validationMiddleware(userValidationSchema.signup, 'body'),
         userAuthController.signup
     );
-    Router.post(
+    
+    /**
+     * Verify OTP For SignUp
+     **/
+      Router.post(
         "/verify-otp-for-signup",
         validationMiddleware(userValidationSchema.verifyOtp, "body"),
         userAuthController.verifyOtpForSignUp
       );
-    Router.post(
+
+    /**
+     * Forgot Password
+     **/
+      Router.post(
         '/user/forgot-password',
         validationMiddleware(userValidationSchema.forgotPassworEmail, 'body'),
         userAuthController.forgotPassword
     );
+
     /**
      * Verify OTP
-     */
-     Router.post(
+     **/
+      Router.post(
         "/verify-otp-forgot-password",
         validationMiddleware(userValidationSchema.verifyOtp, "body"),
         userAuthController.verifyOtpForPassword
       );
-    Router.post(
+
+    /**
+     * Reset Password
+     **/
+      Router.post(
         "/user/reset/password",
         [
           verificationAuthenticated,
@@ -73,72 +90,26 @@ module.exports = () => {
         ],
         userAuthController.resetPassword
       );
-    Router.get(
+
+    /**
+     * Verification Router
+     **/
+      Router.get(
         '/email/u/verification', [
             validationMiddleware(userValidationSchema.verifyEmail, 'query'),
             verificationAuthenticated,
         ],
         userAuthController.verifyEmail
     );
-    // Router.post(
-    //     '/user/forgot/passwordMobile',
-    //     validationMiddleware(userValidationSchema.forgotPasswordMobile, 'body'),
-    //     userAuthController.forgotPasswordMobile
-    // );
 
-    /**
-     * Driver unautherised routes
-     */
-    
-    //  Router.post('/save_driver',[multerService.uploadFile('file').single('resume'),validationMiddleware(driverValidationSchema.saveDriver, 'body')],userDriverController.save_driver);
-    /**
+    /***
      * Social Login
-     */
-    // Router.post(
-    //     '/user/social/login',
-    //     validationMiddleware(userValidationSchema.socialLogin, 'body'),
-    //     userAuthController.socialLogin
-    // );
-    /**
-     * Email verification Route
-     */
-    // Router.get(
-    //     '/email/u/verification', [
-    //         validationMiddleware(userValidationSchema.verifyEmail, 'query'),
-    //         verificationAuthenticated,
-    //     ],
-    //     userAuthController.verifyEmail
-    // );
-
-    // Router.post(
-    //     '/reg/email/u/verification',
-    //     validationMiddleware(userValidationSchema.resendEmailVerification, 'body'),
-    //     userAuthController.resendEmailVerification
-    // );
-
-    /**
-     * Mobile verification Route
-     * */
-    // Router.post(
-    //     '/reg/mobile/u/verification',
-    //     validationMiddleware(userValidationSchema.verifyPhone, 'body'),
-    //     userAuthController.mobileverify
-    // );
-
-    // Router.post(
-    //     '/reg/mobile/u/verification-password',
-    //     validationMiddleware(userValidationSchema.verifyPhone, 'body'),
-    //     userAuthController.verifyOtpForPassword
-    // );
-
-    /**
-     * Mobile verification Route
-     * */
-    // Router.post(
-    //     '/resend/mobile/verification',
-    //     userAuthController.resendOtp
-    // );
-
+    ***/
+     Router.post(
+      '/user/social/login',
+      validationMiddleware(userValidationSchema.socialLogin, 'body'),
+      userAuthController.socialLogin
+    );
     /****************************
      * END OF UNAUTHORIZED ROUTES
      ****************************/
@@ -151,9 +122,9 @@ module.exports = () => {
      */
     Router.use('/', userAuthenticated);
     
-    /*
+    /** 
     Routes To Handle ContactUs
-     */
+     **/
     Router.post('/contact-us',validationMiddleware(contactUsValidationSchema.create, 'body'), contactUsController.create);
 
     /**
@@ -167,11 +138,16 @@ module.exports = () => {
     */
     Router.post('/user/dating/createProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(userDatingValidationSchema.create_profile, 'body')], userDatingController.createDatingProfile);
     Router.put('/user/dating/updateProfile/:id',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(userDatingValidationSchema.update_profile, 'body')], userDatingController.updateDatingProfile);
-    Router.post('/user/dating/get-all-profiles', userDatingController.getAllProfiles);
+    Router.post('/user/dating/get-all-profiles-by-filter', userDatingController.getAllProfiles);
     Router.get('/user/get-all-dating-profiles', userDatingController.getAllDatingProfiles);
     Router.get('/user/dating/get-profile/:id', userDatingController.getSingleProfileById);
     Router.delete('/user/dating/delete-profile/:id', userDatingController.deleteDatingProfile);
-
+    
+    /**
+     * Routes To Handle Static Content
+     */
+     Router.get('/user/get-all-static-content', staticContentController.getAll);
+     Router.get('/user/get-static-content/:id', staticContentController.getSingle);
     /**
     * Routes for handling user news category requests
     */

@@ -19,11 +19,11 @@ module.exports={
         // console.log("ID===>",id);
         let reqObj = req.body;
         try {
-            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id:{$ne: id}});
-            if (getProfileDetailsByQuery.length) {
-                responseData.msg = "This dating profile already exist";
-                return responseHelper.error(res, responseData);
-            }
+            // let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id:{$ne: id}});
+            // if (getProfileDetailsByQuery.length) {
+            //     responseData.msg = "This dating profile already exist";
+            //     return responseHelper.error(res, responseData);
+            // }
 
             let filelocation = [];
             // console.log("========>", req.files)
@@ -38,13 +38,13 @@ module.exports={
                     filelocation.push(req.files.pictures[i].location);
                 }
             }
-            let addressObj = {
-				city: reqObj.city,
-                country: reqObj.country,
-			}
-            const response = {
-				address: addressObj
-			};
+            // let addressObj = {
+			// 	city: reqObj.city,
+            //     country: reqObj.country,
+			// }
+            // const response = {
+			// 	address: addressObj
+			// };
             // let coords = [+reqObj.longitude, +reqObj.latitude];
 			// console.log("==========>",response);
             let Data = {
@@ -54,12 +54,12 @@ module.exports={
                 weight: reqObj.weight,
                 looking_for: reqObj.looking_for,
                 about: reqObj.about,
-                address: addressObj,
+                // address: addressObj,
 				// location: {
 				// 	type: 'Point',
 				// 	coordinates: coords,
                 // },
-                user_id: id,
+                // user_id: id,
             }
             // let userProfile = await userDbHandler.getUserDetailsById(id)
             // if(!userProfile){
@@ -99,13 +99,13 @@ module.exports={
                     filelocation.push(req.files.pictures[i].location);
                 }
             }
-            let addressObj = {
-				city: reqObj.city,
-                country: reqObj.country,
-			}
-            const response = {
-				address: addressObj
-			};
+            // let addressObj = {
+			// 	city: reqObj.city,
+            //     country: reqObj.country,
+			// }
+            // const response = {
+			// 	address: addressObj
+			// };
             let updateData = {
                 pictures: filelocation,
                 age: reqObj.age,
@@ -113,7 +113,7 @@ module.exports={
                 weight: reqObj.weight,
                 looking_for: reqObj.looking_for,
                 about: reqObj.about,
-                address: addressObj,
+                // address: addressObj,
             }
             // let userProfile = await userDbHandler.getUserDetailsById(id)
             // if(!userProfile){
@@ -131,6 +131,26 @@ module.exports={
         } catch (error) {
             log.error('failed to update dating profile with error::', error);
             responseData.msg = "failed to update dating profile";
+            return responseHelper.error(res, responseData);
+        }
+    },
+    getDatingProfilesByFilter: async (req, res) => {
+        let responseData = {};
+        // let user = req.user;
+        // let id = user.sub;
+        let reqObj = req.body;
+        try {  
+            let getProfileList = await datingDbHandler.getProfileDetailsByQuery({ $and: [ {age: reqObj.age}, {height: reqObj.height},{weight: reqObj.weight} ] })
+            if (!getProfileList.length) {
+                responseData.msg = "Dating profile does not exist";
+                return responseHelper.error(res, responseData);
+            }
+                responseData.msg = "Data Fetched Successfully !!!"; 
+                responseData.data = getProfileList;
+                return responseHelper.success(res, responseData);        
+        } catch (error) {
+            log.error('failed to fetch profiles with error::', error);
+            responseData.msg = 'failed to fetch profiles';
             return responseHelper.error(res, responseData);
         }
     },

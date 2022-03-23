@@ -475,5 +475,103 @@ resetPassword: async(req, res) => {
         }
     },  
 
-    
+   /**
+     * Method to handle social login
+     */
+    socialLogin: async (req, res) => {
+        let reqObj = req.body;
+        log.info('Recieved request for User social login:', reqObj);
+        let type = reqObj.type;
+        let accessToken = reqObj.access_token;
+        let responseData = {};
+        try {
+            // if (!reqObj.email) {
+            //     responseData.msg = 'Please link your email id to the social media account';
+            //     return responseHelper.error(res, responseData)
+            // }
+            let query = {
+                access_token: accessToken,
+                login_way: type
+            };
+            let userData = await userDbHandler.getUserDetailsByQuery(query);
+            if (userData.length) {
+                let tokenData = {
+                    sub: userData[0]._id,
+                    user_email: userData[0].user_email,
+                    name: userData[0].name
+                };
+                let token = _generateUserToken(tokenData);
+                let returnResponse = {
+                    user_id: userData[0]._id,
+                    name: userData[0].name,
+                    user_email: userData[0].user_email,
+                    email_verify: userData[0].user_email_verified,
+                    token: token
+                }
+                userData[0].device_token = reqObj.device_token;
+                await userData[0].save();
+                responseData.msg = `Welcome ${userData[0].name} !!!`;
+                responseData.data = returnResponse;
+                return responseHelper.success(res, responseData);
+            }
+            let checkEmail = await userDbHandler.getUserDetailsByQuery({ user_email: reqObj.user_email });
+            if (checkEmail.length) {
+                let updateObj = {
+                    access_token: accessToken,
+                    login_way: type,
+                    device_type: reqObj.device_type,
+                    device_token: reqObj.device_token,
+                    email_verify: true
+                };
+                await userDbHandler.updateUserDetailsById(checkEmail[0], updateObj);
+                let tokenData = {
+                    sub: checkEmail[0]._id,
+                    user_email: checkEmail[0].user_email,
+                    name: checkEmail[0].name
+                };
+                let token = _generateUserToken(tokenData);
+                let returnResponse = {
+                    user_id: checkEmail[0]._id,
+                    name: checkEmail[0].name,
+                    user_email: checkEmail[0].user_email,
+                    email_verify: checkEmail[0].user_email_verified,
+                    token: token
+                }
+                responseData.msg = `Welcome ${checkEmail[0].name} !!!`;
+                responseData.data = returnResponse;
+                return responseHelper.success(res, responseData);
+            }
+            let saveResponse = {
+                access_token: accessToken,
+                login_way: type,
+                device_type: reqObj.device_type,
+                device_token: reqObj.device_token,
+                name: reqObj.name,
+                user_email: reqObj.user_email,
+                email_verify: true
+            };
+            let newUser = await userDbHandler.createUser(saveResponse);
+
+            let tokenData = {
+                sub: newUser._id,
+                user_email: newUser.user_email,
+                name: newUser.name
+            };
+            let token = _generateUserToken(tokenData);
+            let returnResponse = {
+                user_id: newUser._id,
+                name: newUser.name,
+                user_email: newUser.user_email,
+                email_verify: newUser.user_email_verified,
+                token: token
+            }
+            responseData.msg = `Welcome ${newUser.name} !!!`;
+            responseData.data = returnResponse;
+            return responseHelper.success(res, responseData);
+        } catch (error) {
+            log.error('failed to get user social login with error::', error);
+            responseData.msg = 'failed to get user login';
+            return responseHelper.error(res, responseData);
+        }
+    },
 };

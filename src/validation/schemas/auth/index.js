@@ -36,8 +36,7 @@ module.exports = {
         access_token: Joi.string().required().label('token'),
         device_type: Joi.string().required().label('Device Type'),
         device_token: Joi.string().required().label('Device Token'),
-        first_name: Joi.string().allow("").optional().label('First Name'),
-        last_name: Joi.string().allow("").optional().label('Last Name'),
+        name: Joi.string().allow("").optional().label('Name'),
         user_email: Joi.string().allow("").optional().label('User Email')
     }),
     forgotPassword: Joi.object().keys({

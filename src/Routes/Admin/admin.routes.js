@@ -81,6 +81,7 @@ module.exports = () => {
      Router.get('/dating/get-profile/:id', adminDatingController.getSingleProfileById);
      Router.delete('/dating/delete-profile/:id', adminDatingController.deleteDatingProfile);  
      Router.get('/dating/get-profiles-by-gender', adminDatingController.getAllProfilesByGender);
+     Router.post('/get-dating-profiles-by-filter', adminDatingController.getDatingProfilesByFilter);
     
     /**
      * Middlerware for Handling Request News Categories

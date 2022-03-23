@@ -32,18 +32,18 @@ const datingProfileSchema = new Schema({
         type: String,
         default: ""
     },
-    address: {
-            city: { type: String, default: "" },
-            country: {type: String, default: ""},
-        },
-    location: {
-        type: {
-            type: String,
-            enum: ['Point'], // 'location.type' must be 'Point'[lng,lat]
-            default: 'Point',
-        },
-        coordinates: { type: [], default: [0.0000, 0.0000] },
-    },
+    // address: {
+    //         city: { type: String, default: "" },
+    //         country: {type: String, default: ""},
+    //     },
+    // location: {
+    //     type: {
+    //         type: String,
+    //         enum: ['Point'], // 'location.type' must be 'Point'[lng,lat]
+    //         default: 'Point',
+    //     },
+    //     coordinates: { type: [], default: [0.0000, 0.0000] },
+    // },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 datingProfileSchema.index({ location: '2dsphere' });
 module.exports = mongoose.model('Dating Profile', datingProfileSchema);

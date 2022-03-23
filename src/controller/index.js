@@ -13,6 +13,7 @@ const userMoviesCategoryController = require('./userController/moviesCategory');
 const userMoviesController = require('./userController/movies');
 const UserSearchMovieController = require('./userController/searchMovie');
 const contactUsController = require('./userController/contactUs');
+const staticContentController = require('./userController/staticContent');
 
 /**
  * All Admin Controller
@@ -51,4 +52,5 @@ module.exports = {
     userMovies : userMoviesController,
     userSearchMovie: UserSearchMovieController,
     contactUs: contactUsController,
+    staticContent: staticContentController,
 };

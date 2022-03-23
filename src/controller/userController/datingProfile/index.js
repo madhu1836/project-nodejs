@@ -18,11 +18,11 @@ module.exports={
         // console.log("ID===>",id);
         let reqObj = req.body;
         try {
-            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id: { $eq: id}});
-            if (getProfileDetailsByQuery.length) {
-                responseData.msg = "Your dating profile already exist";
-                return responseHelper.error(res, responseData);
-            }
+            // let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id: { $eq: id}});
+            // if (getProfileDetailsByQuery.length) {
+            //     responseData.msg = "Your dating profile already exist";
+            //     return responseHelper.error(res, responseData);
+            // }
 
             let filelocation = [];    
             if (!req.file && !req.files.pictures) {
@@ -34,13 +34,13 @@ module.exports={
                     filelocation.push(req.files.pictures[i].location);
                 }
             }
-            let addressObj = {
-				city: reqObj.city,
-                country: reqObj.country,
-			}
-            const response = {
-				address: addressObj
-			};
+            // let addressObj = {
+			// 	city: reqObj.city,
+            //     country: reqObj.country,
+			// }
+            // const response = {
+			// 	address: addressObj
+			// };
             // let coords = [+reqObj.longitude, +reqObj.latitude];
 			// console.log("==========>",response);
             let Data = {
@@ -50,12 +50,12 @@ module.exports={
                 weight: reqObj.weight,
                 looking_for: reqObj.looking_for,
                 about: reqObj.about,
-                address: addressObj,
+                // address: addressObj,
 				// location: {
 				// 	type: 'Point',
 				// 	coordinates: coords,
                 // },
-                user_id: id,
+                // user_id: id,
             }
             let newProfile = await datingDbHandler.createProfile(Data);
             responseData.msg = "Dating profile created successfully!!!";
@@ -85,13 +85,13 @@ module.exports={
                     filelocation.push(req.files.pictures[i].location);
                 }
             }
-            let addressObj = {
-				city: reqObj.city,
-                country: reqObj.country,
-			}
-            const response = {
-				address: addressObj
-			};
+            // let addressObj = {
+			// 	city: reqObj.city,
+            //     country: reqObj.country,
+			// }
+            // const response = {
+			// 	address: addressObj
+			// };
             // let fileLocation = '';
             // if (req.file) {
             //     fileLocation = req.file.location;
@@ -106,8 +106,8 @@ module.exports={
                 weight: reqObj.weight,
                 looking_for: reqObj.looking_for,
                 about: reqObj.about,
-                address: addressObj,
-                user_id: id,
+                // address: addressObj,
+                // user_id: id,
             }
             // let userProfile = await userDbHandler.getUserDetailsById(id)
             // if(userProfile.user_email != reqObj.profile_email){
