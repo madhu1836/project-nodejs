@@ -7,7 +7,30 @@ const config = require('../../../config/environments');
  * Creating User Schema Model
  */
 const userSchema = new Schema({
-
+    pictures:{
+        type: [String],
+        default: [],
+    },
+    age: {
+        type: Number,
+        default: '',
+    },
+    height: {
+        type: String,
+        default: '',
+    },
+    weight: {
+        type: Number,
+        default: '',
+    },
+    looking_for:{
+        type: String,
+        enum: ["Men","Women", "Others"],
+    },
+    about:{
+        type: String,
+        default: ""
+    },
     profile_picture: {
         type: String,
         default: '',
@@ -18,7 +41,6 @@ const userSchema = new Schema({
     },
     user_email: {
         type: String,
-        required: true,
         trim: true,
     },
     user_password: {
@@ -32,7 +54,6 @@ const userSchema = new Schema({
     },
     gender: {
         type: String,
-        default: '',
         enum: ['Male', 'Female', 'Others']
     },
     user_otp_verified: {

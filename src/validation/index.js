@@ -13,4 +13,6 @@ module.exports = {
 	searchMovieSchema: require('./schemas/searchMovie'),
 	contactUsSchema: require('./schemas/contactUs'),
 	staticContent: require('./schemas/staticContent'),
+	userManagementSchema: require('./schemas/userManagement'),
+	friendsList: require('./schemas/friendsList'),
 };

@@ -10,6 +10,7 @@ const adminMoviesCategoryController = require("../../controller").adminMoviesCat
 const adminMoviesController = require("../../controller").adminMovies;
 const adminContactUsController = require("../../controller").adminContactUs;
 const adminStaticContentController = require('../../controller').adminstaticContent;
+const adminUserManagementController= require('../../controller').userManagementController;
 
 /**
  * Middlewares
@@ -28,6 +29,7 @@ const newsCategoryValidationSchema = require("../../validation").newsCategorySch
 const moviesCategoryValidationSchema = require("../../validation").moviesCategorySchema;
 const moviesValidationSchema = require("../../validation").moviesSchema;
 const staticContentvalidationSchema = require('../../validation').staticContent;
+const userManagementValidationSchema = require('../../validation').userManagementSchema;
 
 
 module.exports = () => {
@@ -57,7 +59,7 @@ module.exports = () => {
     Router.post("/add-admin", validationMiddleware(adminValidationSchema.add_admin, "body"), adminAuthController.addAdmin);
     
     /**
-      *Routes To handle Messages
+      *Routes To handle User messages
     */
     Router.get('/get-all-messages',adminContactUsController.getAll);
     Router.get('/get-single-message/:id', adminContactUsController.getSingle);
@@ -75,7 +77,7 @@ module.exports = () => {
     /**
      * Routes for handling dating profile requests
      */
-     Router.post('/dating/createProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(adminDatingValidationSchema.create_profile, 'body')], adminDatingController.createDatingProfile);
+    //  Router.post('/dating/createProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(adminDatingValidationSchema.create_profile, 'body')], adminDatingController.createDatingProfile);
      Router.put('/dating/updateProfile/:id',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(adminDatingValidationSchema.update_profile, 'body')], adminDatingController.updateDatingProfile);
      Router.get('/dating/get-all-profiles', adminDatingController.getAllProfiles);
      Router.get('/dating/get-profile/:id', adminDatingController.getSingleProfileById);
@@ -83,6 +85,16 @@ module.exports = () => {
      Router.get('/dating/get-profiles-by-gender', adminDatingController.getAllProfilesByGender);
      Router.post('/get-dating-profiles-by-filter', adminDatingController.getDatingProfilesByFilter);
     
+    /**
+      * Routes To Handle User Management 
+    */
+     Router.get("/get-all-users-by-admin", adminUserManagementController.getAllUsers);
+     Router.get("/get-user-by-admin/:id", adminUserManagementController.getSingleUser);
+     Router.post("/add-user-by-admin", validationMiddleware(userManagementValidationSchema.addUser, "body"), adminUserManagementController.addUser);
+     Router.put("/update-user-by-admin/:id", validationMiddleware(userManagementValidationSchema.updateUser, "body"), adminUserManagementController.updateUserProfile);
+     Router.delete("/delete-user-by-admin/:id", adminUserManagementController.deleteUserProfile);
+     Router.post('/search-user-by-admin',adminUserManagementController.getUserSearchSuggestions);
+
     /**
      * Middlerware for Handling Request News Categories
      */

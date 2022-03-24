@@ -117,7 +117,7 @@ module.exports = {
             return responseHelper.success(res, responseData);
 
         } catch (error) {
-            log.error('failed to get user signup with error::', error);
+            log.error('failed to get user Login with error::', error);
             responseData.msg = 'failed to get user login';
             return responseHelper.error(res, responseData);
         }
@@ -574,4 +574,5 @@ resetPassword: async(req, res) => {
             return responseHelper.error(res, responseData);
         }
     },
+
 };

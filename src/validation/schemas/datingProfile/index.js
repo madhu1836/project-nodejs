@@ -7,7 +7,7 @@ const Joi = JoiBase.extend(JoiDate);
  */
 module.exports = {
 	create_profile: Joi.object().keys({
-        pictures:Joi
+        profile_picture:Joi
             .string()
             .label("Profile Image"),
         age: Joi
@@ -25,16 +25,12 @@ module.exports = {
         looking_for: Joi
             .string()
             .required()
-            .valid("male", "female", "others")
-            .label('Gender'),  
+            .valid("Men", "Women", "Others")
+            .label('Looking For'),  
         about: Joi.string().required().label("About"),
-        // city: Joi.string().trim().label('City'), 
-        // country: Joi.string().trim().label("Country"),
-        // latitude: Joi.string().label('Latitude'),
-        // longitude: Joi.string().label('Longitude')
     }),
     update_profile: Joi.object().keys({
-        pictures:Joi
+        profile_picture:Joi
             .string()
             .label("Profile Image"),
         age: Joi
@@ -52,13 +48,9 @@ module.exports = {
         looking_for: Joi
             .string()
             .required()
-            .valid("male", "female", "others")
-            .label('Gender'), 
+            .valid("Men", "Women", "Others")
+            .label('Looking For'), 
         about: Joi.string().required().label("About"),
-        // city: Joi.string().trim().label('City'),
-        // country: Joi.string().trim().label("Country"),
-        // latitude: Joi.string().label('Latitude'),
-        // longitude: Joi.string().label('Longitude')
 	}),
 
 };

@@ -15,5 +15,5 @@ module.exports = {
 	SearchMovies: require('./searchMovie.service'),
 	contactUs: require('./contactUs.service'),
 	staticContent:require('./statisContent.service'),
-
+    friendsList: require('./friendsList.service'),
 };

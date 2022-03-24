@@ -12,6 +12,7 @@ const userMoviesController = require('../../controller').userMovies;
 const userSearchMovieController = require('../../controller').userSearchMovie;
 const contactUsController = require('../../controller').contactUs;
 const staticContentController = require('../../controller').staticContent;
+const friendsListController = require('../../controller').friendsList;
 
 /**
  * All Middlewares
@@ -29,6 +30,7 @@ const userInfoValidationSchema = require('../../validation').userInfoSchema;
 const userDatingValidationSchema = require('../../validation').datingProfileSchema;
 const userSearchMovieValidationSchema = require('../../validation').searchMovieSchema;
 const contactUsValidationSchema = require('../../validation').contactUsSchema;
+const friendsListValidationSchema = require('../../validation').friendsList;
 
 module.exports = () => {
     /***************************
@@ -136,7 +138,7 @@ module.exports = () => {
     /**
     * Routes for handling Dating profile 
     */
-    Router.post('/user/dating/createProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(userDatingValidationSchema.create_profile, 'body')], userDatingController.createDatingProfile);
+    // Router.post('/user/dating/createProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(userDatingValidationSchema.create_profile, 'body')], userDatingController.createDatingProfile);
     Router.put('/user/dating/updateProfile/:id',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(userDatingValidationSchema.update_profile, 'body')], userDatingController.updateDatingProfile);
     Router.post('/user/dating/get-all-profiles-by-filter', userDatingController.getAllProfiles);
     Router.get('/user/get-all-dating-profiles', userDatingController.getAllDatingProfiles);
@@ -148,6 +150,15 @@ module.exports = () => {
      */
      Router.get('/user/get-all-static-content', staticContentController.getAll);
      Router.get('/user/get-static-content/:id', staticContentController.getSingle);
+
+    /**
+     * Routes To Handle Friend List
+     */
+    Router.post('/user/add-to-friends-list', validationMiddleware(friendsListValidationSchema.add), friendsListController.add);
+    Router.post('/user/rejected-profile',friendsListController.rejectProfile);
+    Router.get('/user/get-all-friends-list',friendsListController.getAll);
+    Router.get('/user/get-friends-list/:id', friendsListController.getById);
+    Router.delete('/user/delete-friend-list/:id', friendsListController.delete);
     /**
     * Routes for handling user news category requests
     */
@@ -160,7 +171,6 @@ module.exports = () => {
     Router.get('/user/get-news/:id', userNewsController.getSingleNews);
     Router.get('/user/get-all-news-by-category/:newsCategory_id', userNewsController.getAllNewsByCategory);
     Router.get('/user/get-all-news', userNewsController.getAllNews);
-
     /**
      * Middlerware for Handling Request Movies Categories
     */

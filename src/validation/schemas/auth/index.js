@@ -72,4 +72,5 @@ module.exports = {
         zip_code: Joi.string().required().label('zip_code'),
         who_am_i: Joi.string().required().label('who_am_i'),
     }),
+
 };

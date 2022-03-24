@@ -11,61 +11,46 @@ const config = require('../../../config/environments');
 
 
 module.exports={
-    createDatingProfile: async (req, res) => {
-        let responseData = {};
-        let user = req.user;
-        let id = user.sub;
-        // console.log("ID===>",id);
-        let reqObj = req.body;
-        try {
-            // let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id: { $eq: id}});
-            // if (getProfileDetailsByQuery.length) {
-            //     responseData.msg = "Your dating profile already exist";
-            //     return responseHelper.error(res, responseData);
-            // }
+    // createDatingProfile: async (req, res) => {
+    //     let responseData = {};
+    //     let user = req.user;
+    //     let id = user.sub;
+    //     // console.log("ID===>",id);
+    //     let reqObj = req.body;
+    //     try {
+    //         // let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id: { $eq: id}});
+    //         // if (getProfileDetailsByQuery.length) {
+    //         //     responseData.msg = "Your dating profile already exist";
+    //         //     return responseHelper.error(res, responseData);
+    //         // }
 
-            let filelocation = [];    
-            if (!req.file && !req.files.pictures) {
-                responseData.msg = "Failed to upload pictures";
-                return responseHelper.error(res, responseData);
-        }
-            if (req.files && req.files.pictures) {
-                for (let i = 0; i < req.files.pictures.length; i++) {
-                    filelocation.push(req.files.pictures[i].location);
-                }
-            }
-            // let addressObj = {
-			// 	city: reqObj.city,
-            //     country: reqObj.country,
-			// }
-            // const response = {
-			// 	address: addressObj
-			// };
-            // let coords = [+reqObj.longitude, +reqObj.latitude];
-			// console.log("==========>",response);
-            let Data = {
-                pictures: filelocation,
-                age: reqObj.age,
-                height: reqObj.height,
-                weight: reqObj.weight,
-                looking_for: reqObj.looking_for,
-                about: reqObj.about,
-                // address: addressObj,
-				// location: {
-				// 	type: 'Point',
-				// 	coordinates: coords,
-                // },
-                // user_id: id,
-            }
-            let newProfile = await datingDbHandler.createProfile(Data);
-            responseData.msg = "Dating profile created successfully!!!";
-            return responseHelper.success(res, responseData);
-        } catch (error) {
-            log.error('failed to create dating profile with error::', error);
-            responseData.msg = "failed to create dating profile";
-            return responseHelper.error(res, responseData);
-        }
-    },
+    //         let filelocation = [];    
+    //         if (!req.file && !req.files.pictures) {
+    //             responseData.msg = "Failed to upload pictures";
+    //             return responseHelper.error(res, responseData);
+    //     }
+    //         if (req.files && req.files.pictures) {
+    //             for (let i = 0; i < req.files.pictures.length; i++) {
+    //                 filelocation.push(req.files.pictures[i].location);
+    //             }
+    //         }
+    //         let Data = {
+    //             pictures: filelocation,
+    //             age: reqObj.age,
+    //             height: reqObj.height,
+    //             weight: reqObj.weight,
+    //             looking_for: reqObj.looking_for,
+    //             about: reqObj.about,
+    //         }
+    //         let newProfile = await datingDbHandler.createProfile(Data);
+    //         responseData.msg = "Dating profile created successfully!!!";
+    //         return responseHelper.success(res, responseData);
+    //     } catch (error) {
+    //         log.error('failed to create dating profile with error::', error);
+    //         responseData.msg = "failed to create dating profile";
+    //         return responseHelper.error(res, responseData);
+    //     }
+    // },
     updateDatingProfile: async (req, res) => {
         let responseData = {};
         let user = req.user;
@@ -85,13 +70,6 @@ module.exports={
                     filelocation.push(req.files.pictures[i].location);
                 }
             }
-            // let addressObj = {
-			// 	city: reqObj.city,
-            //     country: reqObj.country,
-			// }
-            // const response = {
-			// 	address: addressObj
-			// };
             // let fileLocation = '';
             // if (req.file) {
             //     fileLocation = req.file.location;
@@ -106,15 +84,7 @@ module.exports={
                 weight: reqObj.weight,
                 looking_for: reqObj.looking_for,
                 about: reqObj.about,
-                // address: addressObj,
-                // user_id: id,
             }
-            // let userProfile = await userDbHandler.getUserDetailsById(id)
-            // if(userProfile.user_email != reqObj.profile_email){
-            //     responseData.msg = "Email should be same as you profile email!!!";
-            //     return responseHelper.success(res, responseData);
-            // }
-
             let updatingData = await datingDbHandler.updateProfileDetailsById(id,updateData,);
             responseData.msg = "Dating profile updated successfully!!!";
             return responseHelper.success(res, responseData);

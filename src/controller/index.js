@@ -14,6 +14,7 @@ const userMoviesController = require('./userController/movies');
 const UserSearchMovieController = require('./userController/searchMovie');
 const contactUsController = require('./userController/contactUs');
 const staticContentController = require('./userController/staticContent');
+const friendsListController = require('./userController/friendsList');
 
 /**
  * All Admin Controller
@@ -26,6 +27,7 @@ const adminMoviesCategoryController = require('./adminController/moviesCategory'
 const adminMovieController = require('./adminController/movies');
 const adminContactUsController = require('./adminController/contactUs');
 const adminStaticContentController = require('./adminController/staticContent')
+const adminUserManagementController = require('./adminController/userManagement')
 
 module.exports = {
     /**
@@ -39,6 +41,7 @@ module.exports = {
     adminMovies: adminMovieController,
     adminContactUs: adminContactUsController,
     adminstaticContent: adminStaticContentController,
+    userManagementController: adminUserManagementController,
 
     /**
      * All User Controllers
@@ -53,4 +56,5 @@ module.exports = {
     userSearchMovie: UserSearchMovieController,
     contactUs: contactUsController,
     staticContent: staticContentController,
+    friendsList: friendsListController, 
 };
