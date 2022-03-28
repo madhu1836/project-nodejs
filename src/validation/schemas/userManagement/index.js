@@ -13,14 +13,14 @@ module.exports = {
     name: Joi.string().trim().min(3).label("User Name"),
     phone_number: Joi.string().min(10).label("Phone Number"),
     user_email: Joi.string().required().label('Email'),
-    user_password: Joi.string().required().label('Password'),
+    // user_password: Joi.string().required().label('Password'),
     gender: Joi.string().required().label("Gender"),
   }),
   updateUser: Joi.object().keys({
     name: Joi.string().trim().min(3).label("User Name"),
     phone_number: Joi.string().min(10).label("Phone Number"),
     user_email: Joi.string().required().label('Email'),
-    user_password: Joi.string().optional().allow("").label('Password'),
+    // user_password: Joi.string().optional().allow("").label('Password'),
     gender: Joi.string().required().label("Gender"),
   }),
   

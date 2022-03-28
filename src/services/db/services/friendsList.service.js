@@ -22,12 +22,12 @@ class User {
     }
     getById(userId, projection) {
         if (projection) {
-            return this._Controller.findOne({ _id: userId }, projection).populate("user_id");
+            return this._Controller.findOne({ _id: userId }, projection).populate("sender_id").populate("receiver_id");
         }
-        return this._Controller.findOne({ _id: userId }).populate("user_id");
+        return this._Controller.findOne({ _id: userId }).populate("sender_id").populate("receiver_id");
     }
     getByQuery(query, projection = {}) {
-        return this._Controller.find(query, projection).populate("user_id");
+        return this._Controller.find(query, projection).populate("sender_id").populate("receiver_id");
     }
 
     updateById(userId, updatedObj) {

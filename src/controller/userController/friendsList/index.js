@@ -82,7 +82,6 @@ module.exports = {
             return responseHelper.error(res, responseData);
         }
     },
-
     /**
      * Method to handle single data 
      */
