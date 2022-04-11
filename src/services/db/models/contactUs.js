@@ -12,14 +12,6 @@ const contactSchema = new Schema({
         type: String,
         default: '',
     },
-    name: {
-        type:String,
-        trim:true,
-    },
-    user_email: {
-        type:String,
-        trim:true,
-    }
 
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 

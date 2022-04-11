@@ -94,7 +94,7 @@ module.exports = {
                 responseData.msg = "Invalid Credentials!!!";
                 return responseHelper.error(res, responseData);
             }
-            if (!getUser[0].user_email_verified){
+            if (!getUser[0].user_otp_verified){
                 responseData.msg = "Please verify your account!!!";
                 return responseHelper.error(res, responseData);
             }
@@ -108,7 +108,8 @@ module.exports = {
                 user_id: getUser[0]._id,
                 name: getUser[0].name,
                 user_email: getUser[0].user_email,
-                email_verify: getUser[0].user_email_verified,
+                user_otp_verified: getUser[0].user_otp_verified,
+                gender: getUser[0].gender,
                 token: token
             }
             responseData.msg = `Welcome ${getUser[0].name} !!!`;
@@ -116,7 +117,7 @@ module.exports = {
             return responseHelper.success(res, responseData);
 
         } catch (error) {
-            log.error('failed to get user signup with error::', error);
+            log.error('failed to get user Login with error::', error);
             responseData.msg = 'failed to get user login';
             return responseHelper.error(res, responseData);
         }
@@ -146,13 +147,13 @@ module.exports = {
             if (checkPhoneNumber.length) {
                 responseData.msg = 'Phone Number Already Exist !!!';
                 return responseHelper.error(res, responseData);
-            }
-            
+            }  
             let submitData = {
                 name: reqObj.name,
                 user_email: reqObj.user_email,
                 phone_number: reqObj.phone_number,
                 user_password:reqObj.user_password,
+                gender: reqObj.gender,
             }
             let newUser = await userDbHandler.createUser(submitData);
             log.info('User created in the database collection',newUser);
@@ -164,46 +165,281 @@ module.exports = {
             let verificationType = 'email';
             //generate email verification token
             let emailVerificationToken = _generateVerificationToken(tokenData,verificationType);
-            //send verification email after user successfully created
-            //patch email verification templateBody
-            let templateBody = {
+            let digits = '0123456789';
+            let OTP = '';
+            for (let i = 0; i < 4; i++) {
+                OTP += digits[Math.floor(Math.random() * 10)];
+            }
+            let otpBody = {
+                name: newUser.name,
+                otp: OTP,
                 type: verificationType,
                 token: emailVerificationToken,
-                name: newUser.name
-            };
-            // console.log("token=======>", templateBody.token)
+            }
+
             let emailBody = {
-                recipientsAddress: newUser.user_email,
-                subject: 'A link to verify your email',
-                body: templates.emailVerification(templateBody)
-            };
+				recipientsAddress: newUser.user_email,
+				subject: 'OTP',
+				body: templates.otpVerification(otpBody)
+			};
+
             let emailInfo = await emailService.sendEmail(emailBody);
             if(emailInfo) {
-                log.info('email verification mail sent successfully',emailInfo);
+                log.info('Email verification mail sent successfully',emailInfo);
                 let emailObj = {
                     token : emailVerificationToken,
                     user_id : newUser._id,
-                    verification_type: verificationType
+                    verification_type: verificationType,
+                    otp: OTP
                 };
+                log.info(emailObj)
+                console.log('verification -----');
                 let newEmailVerification = await verificationDbHandler.createVerification(emailObj);
-                log.info('new email verification entry created successfully in the database',newEmailVerification);
-                responseData.msg = 'your account has been created successfully! Please verify your email. Verification link has been sent on your registered email Id';
+                
+                responseData.code = 200;
+                responseData.msg = 'Your account has been created successfully!. To verify, You will receive an OTP on your registered email.';
                 responseData.data = newEmailVerification
-                // responseData.data = {token:mobileverificationtoken, type:'mobile'};
                 return responseHelper.success(res,responseData);
             }
-            // let saveData = await userDbHandler.createUser(reqObj);
-            // responseData.msg = "Data Saved Successfully!!!";
-            // return responseHelper.success(res, responseData);
         } catch (error) {
             log.error('failed to get user signup with error::', error);
             responseData.msg = 'failed to create user';
             return responseHelper.error(res, responseData);
         }
     },
-    verifyEmail: async(req, res) => {
+    verifyOtpForSignUp: async(req, res) => {
+        let reQuery = req.query;
+        let otpTokenInfo = reQuery.token;
+        let reqBody = req.body;
+        log.info('Received request for email verification ::', otpTokenInfo);
+        let responseData = {};
+        try {
+            let query = {
+                token: otpTokenInfo,
+                verification_type: 'email',
+                otp: reqBody.otp
+            };
+            let otpInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
+            if (!otpInfo.length) {
+                responseData.msg = 'Invalid email OTP verification request or token expired or wrong otp';
+                return responseHelper.error(res, responseData);
+            }
+            //update user email verification status
+            let userId = otpInfo[0].user_id;
+            let updateObj = {
+                user_otp_verified: true
+            };
+            let updatedUser = await userDbHandler.updateUserDetailsById(userId, updateObj);
+            if (!updatedUser) {
+                log.info('failed to verify user email');
+                responseData.msg = 'failed to verify email';
+                return responseHelper.error(res, responseData);
+            }
+            log.info('user email verification status updated successfully', updatedUser);
+            let removedTokenInfo = await _handleVerificationDataUpdate(otpInfo[0]._id);
+                log.info('password verification token has been removed::', removedTokenInfo);
+                responseData.msg = 'OTP verified successfully!';
+                return responseHelper.success(res, responseData);
+        } catch (error) {
+            log.error('failed to process mobile verification::', error);
+            responseData.msg = 'failed to verify user mobile';
+            return responseHelper.error(res, responseData);
+        }
+    },
+
+    /**
+     * Method to handle forgot password
+     */
+     forgotPassword: async (req,res) => {
+        let reqBody = req.body;
+        log.info('Recieved request for User forgot password:',reqBody);
+        let userEmail = reqBody.user_email.toLowerCase();
+        let responseData = {};
+        let isVerificationDataExists = false;
+        try {
+            let query = {
+                user_email : userEmail,
+                login_way : 'local'
+            };
+            let userData = await userDbHandler.getUserDetailsByQuery(query);
+            if(!userData.length) {
+                log.error('user email does not exist for forgot password request');
+                responseData.msg = 'Email Id doesn\'t exists';
+                return responseHelper.error(res,responseData);
+            }
+            let tokenData = {
+                user_email : userData[0].user_email
+            };
+            let verificationType = 'password';
+            //generate password verification token
+            let passwordResetToken = await _generateVerificationToken(tokenData,verificationType);
+            //check if user already have forgot password request data in verification collection
+            let passwordQuery = {
+                user_id: userData[0]._id,
+                verification_type: verificationType
+            };
+            let passwordTokenInfo = await verificationDbHandler.getVerificationDetailsByQuery(passwordQuery);
+            let digits = '0123456789';
+            let OTP = '';
+            for (let i = 0; i < 4; i++) {
+                OTP += digits[Math.floor(Math.random() * 10)];
+            }
+            //if password verification data found update it with new token, else create new entry
+            if(passwordTokenInfo.length) {
+                isVerificationDataExists = true;
+                let updatePasswordVerificationObj = {
+                    token : passwordResetToken,
+                    otp : OTP,
+                    attempts: passwordTokenInfo[0].attempts + 1
+                };
+                let updateQuery = {
+                    _id: passwordTokenInfo[0]._id,
+                };
+                let option = {
+                    upsert : false
+                };
+                let updatedVerificationData = await verificationDbHandler.updateVerificationByQuery(updateQuery,updatePasswordVerificationObj,option);
+                log.info('password verification token updated in the db',updatedVerificationData);
+            }
+            //patch email verification templateBody
+            let templateBody = {
+                name:userData[0].name,
+                type: verificationType,
+                otp : OTP,
+                token: passwordResetToken
+            };
+            let emailBody = {
+                recipientsAddress: userData[0].user_email,
+                subject: 'OTP to change your password',
+                body: templates.otpVerification(templateBody)
+            };
+            let emailInfo = await emailService.sendEmail(emailBody);
+            if(emailInfo && !isVerificationDataExists) {
+                log.info('password reset mail sent successfully',emailInfo);
+                let passwordResetObj = {
+                    token : passwordResetToken,
+                    user_id : userData[0]._id,
+                    otp : OTP,
+                    verification_type: verificationType
+                };
+                let newPasswordVerification = await verificationDbHandler.createVerification(passwordResetObj);
+                log.info('new forgot password entry created successfully in the database',newPasswordVerification);
+            }
+            responseData.msg = 'OTP has been sent successfully fore forgot password! Please check your registered email inbox';
+            responseData.data = { token: passwordResetToken, type: 'password' }
+            return responseHelper.success(res,responseData);
+        }catch(error) {
+            log.error('failed to process forget password request with error::',error);
+            responseData.msg = 'failed to process forget password request';
+            return responseHelper.error(res,responseData);
+        }
+    },    
+    /**
+ * Verify OTP For Forgotpassword
+ */
+ verifyOtpForPassword: async(req, res) => {
+    let reQuery = req.query;
+    let otpTokenInfo = reQuery.token;
+    let reqBody = req.body;
+    log.info('Received request for email verification ::', otpTokenInfo);
+    let responseData = {};
+    try {
+        let query = {
+            token: otpTokenInfo,
+            verification_type: 'password',
+            otp: reqBody.otp
+        };
+        let otpInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
+        if (!otpInfo.length) {
+            responseData.msg = 'Invalid email OTP verification request or token expired or wrong otp';
+            return responseHelper.error(res, responseData);
+        }
+        //update user email verification status
+        let userId = otpInfo[0].user_id;
+        let updateObj = {
+            resetPassword_verified: true
+        };
+        let updatedUser = await userDbHandler.updateUserDetailsById(userId, updateObj);
+        if (!updatedUser) {
+            log.info('failed to verify user email');
+            responseData.msg = 'failed to verify email';
+            return responseHelper.error(res, responseData);
+        }
+        log.info('user email verification status updated successfully', updatedUser);
+        // let removedTokenInfo = await _handleVerificationDataUpdate(otpInfo[0]._id);
+        //     log.info('password verification token has been removed::', removedTokenInfo);
+            responseData.msg = 'OTP verified successfully!';
+            return responseHelper.success(res, responseData);
+    } catch (error) {
+        log.error('failed to process mobile verification::', error);
+        responseData.msg = 'failed to verify user mobile';
+        return responseHelper.error(res, responseData);
+    }
+},
+resetPassword: async(req, res) => {
+    let reqBody = req.body;
+    let resetPasswordToken = req.decodedPasswordToken;
+    // let resetPasswordToken = req.params.token;
+    log.info('Recieved request for password reset====>:', resetPasswordToken, reqBody);
+    let newPassword = reqBody.new_password;
+    let responseData = {};
+    try {
+        let query = {
+            token: resetPasswordToken,
+            verification_type: 'password'
+        };
+        let passwordTokenInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
+        if (!passwordTokenInfo.length) {
+            log.error('Invalid password reset token:', resetPasswordToken);
+            responseData.msg = 'Invalid Password reset request or token expired';
+            return responseHelper.error(res, responseData);
+        }
+        log.info("tokenInfo", passwordTokenInfo);
+        let userId = passwordTokenInfo[0].user_id;
+        console.log('id====>',userId);
+        let userDetail = await userDbHandler.getUserDetailsById(userId);
+        // if(userDetail.password) {
+        //     let comparePassword = await _comparePassword(newPassword, userDetail.password);
+        // }
+        let comparePassword = await _comparePassword(newPassword, userDetail.user_password);
+        console.log("compare_password===>",comparePassword);
+        if (comparePassword) {
+            log.error('Use old password:', newPassword);
+            responseData.msg = 'new password can not be same as old password';
+            return responseHelper.error(res, responseData);
+        }
+        
+        if(!userDetail.resetPassword_verified) {
+            log.error('Please verify your OTP',userDetail[0].resetPassword_verified);
+            responseData.msg = 'Your OTP is not verified';
+            return responseHelper.error(res,responseData);
+        }
+
+        let encryptedPassword = await _encryptPassword(newPassword);
+        let updateUserQuery = {
+            user_password: encryptedPassword,
+            resetPassword_verified : false
+        };
+        let updatedUser = await userDbHandler.updateUserDetailsById(userId, updateUserQuery);
+        if (!updatedUser) {
+            log.error('failed to reset user password', updatedUser);
+            responseData.msg = 'failed to reset password';
+            return responseHelper.error(res, responseData);
+        }
+        //delete the password token from db;
+        let removedTokenInfo = await _handleVerificationDataUpdate(passwordTokenInfo[0]._id);
+        log.info('password verification token has been removed::', removedTokenInfo);
+        responseData.msg = 'Password updated successfully! Please Login to continue';
+        return responseHelper.success(res, responseData);
+    } catch (error) {
+        log.error('failed to reset password with error::', error);
+        responseData.msg = 'failed to reset password';
+        return responseHelper.error(res, responseData);
+    }
+},
+
+    verifyEmail: async (req, res) => {
         let emailToken = req.decodedEmailToken;
-        console.log("tokennnnn========================> ", emailToken)
         log.info('Received request for email verification ::', emailToken);
         let responseData = {};
         try {
@@ -226,7 +462,7 @@ module.exports = {
                 log.info('failed to verify user email');
                 responseData.msg = 'failed to verify email';
                 return responseHelper.error(res, responseData);
-            }   
+            }
             log.info('user email verification status updated successfully', updatedUser);
             let removedTokenInfo = await _handleVerificationDataUpdate(emailInfo[0]._id);
             log.info('email verification token has been removed::', removedTokenInfo);
@@ -237,124 +473,84 @@ module.exports = {
             responseData.msg = 'failed to verify user email';
             return responseHelper.error(res, responseData);
         }
-    },
-    
-    /**
-     * Method to handle forgot password by email
+    },  
+
+   /**
+     * Method to handle social login
      */
-     forgotPasswordByEmail: async(req, res) => {
-        let reqBody = req.body;
-        log.info('Recieved request for User forgot password:', reqBody);
-        let userEmail = reqBody.user_email;
+    socialLogin: async (req, res) => {
+        let reqObj = req.body;
+        log.info('Recieved request for User social login:', reqObj);
+        let type = reqObj.type;
+        let accessToken = reqObj.access_token;
         let responseData = {};
-        let isVerificationDataExists = false;
         try {
+            // if (!reqObj.email) {
+            //     responseData.msg = 'Please link your email id to the social media account';
+            //     return responseHelper.error(res, responseData)
+            // }
             let query = {
-                user_email: userEmail,
-                login_way: 'local'
+                access_token: accessToken,
+                login_way: type
             };
             let userData = await userDbHandler.getUserDetailsByQuery(query);
-            if (!userData.length) {
-                log.error('user email doesnot exist for forget password request');
-                responseData.msg = 'User is not registered with us please register your self';
-                return responseHelper.error(res, responseData);
-            }
-            let tokenData = {
-                user_email: userData[0].user_email
-            };
-            let verificationType = 'email';
-            //generate password verification token
-            let passwordResetToken = _generateVerificationToken(tokenData, verificationType);
-            //check if user already have forgot password request data in verification collection
-            let passwordQuery = {
-                user_id: userData[0]._id,
-                verification_type: verificationType
-            };
-            let passwordTokenInfo = await verificationDbHandler.getVerificationDetailsByQuery(passwordQuery);
-            let digits = '0123456789';
-            let OTP = '';
-            for (let i = 0; i < 4; i++) {
-                OTP += digits[Math.floor(Math.random() * 10)];
-            }
-            //let OTP='1234';
-            
-            let otpBody = {
-				otp: OTP
-			};
-
-            //if password verification data found update it with new token, else create new entry
-            if (passwordTokenInfo.length) {
-                isVerificationDataExists = true;
-                let updatePasswordVerificationObj = {
-                    token: passwordResetToken,
-                    attempts: passwordTokenInfo[0].attempts + 1,
-                    otp:otpBody.otp
+            if (userData.length) {
+                let tokenData = {
+                    sub: userData[0]._id,
+                    user_email: userData[0].user_email,
+                    name: userData[0].name
                 };
-                let updateQuery = {
-                    _id: passwordTokenInfo[0]._id,
-                };
-                let option = {
-                    upsert: false
-                };
-                let updatedVerificationData = await verificationDbHandler.updateVerificationByQuery(updateQuery, updatePasswordVerificationObj, option);
-                log.info('password verification token updated in the db', updatedVerificationData);
-            }
-            
-            
-            let emailBody = {
-				recipientsAddress: userEmail,
-				subject: 'OTP',
-				body: templates.otpVerification(otpBody)
-			};
-
-            let emailInfo = await emailService.sendEmail(emailBody);
-            
-            
-            //patch email verification templateBody
-            let templateBody = {
-                type: verificationType,
-                token: passwordResetToken,
-                otp: otpBody.otp
-                
-            };
-            if (!isVerificationDataExists) {
-                // if(emailInfo) {
-            //     log.info('Email verification mail sent successfully',emailInfo);
-            //     responseData.msg = 'OTP have been sent on the registered Email-Id';
-            //     return responseHelper.success(res,responseData);
-            // }
-            // let emailInfo = await emailService.sendEmail(emailBody);
-            // log.info('password reset mail sent successfully', emailInfo);
-                let passwordResetObj = {
-                    token: passwordResetToken,
+                let token = _generateUserToken(tokenData);
+                let returnResponse = {
                     user_id: userData[0]._id,
-                    verification_type: verificationType,
-                    otp: otpBody.otp
-                };
-                let newPasswordVerification = await verificationDbHandler.createVerification(passwordResetObj);
-                log.info('new forgot password entry created successfully in the database', newPasswordVerification);
+                    name: userData[0].name,
+                    user_email: userData[0].user_email,
+                    email_verify: userData[0].user_email_verified,
+                    token: token
+                }
+                userData[0].device_token = reqObj.device_token;
+                await userData[0].save();
+                responseData.msg = `Welcome ${userData[0].name} !!!`;
+                responseData.data = returnResponse;
+                return responseHelper.success(res, responseData);
             }
-            responseData.msg = 'Email validated and OTP is sent on your mail';
-            responseData.data = templateBody;
-            return responseHelper.success(res, responseData);
-        } catch (error) {
-            log.error('failed to process forget password request with error::', error);
-            responseData.msg = 'failed to process forget password request';
-            return responseHelper.error(res, responseData);
-        }
-    },
-    verifyOtp: async(req, res) => {
-        let reQuery = req.query;
-        let decodedEmailToken = reQuery.token;
-        let reqBody = req.body;
-        log.info('Received request for otp verification ::', decodedEmailToken);
-        let responseData = {};
-        try {
-            let query = {
-                token: decodedEmailToken,
-                verification_type: 'email',
-                otp: reqBody.otp
+            let checkEmail = await userDbHandler.getUserDetailsByQuery({ user_email: reqObj.user_email });
+            if (checkEmail.length) {
+                let updateObj = {
+                    access_token: accessToken,
+                    login_way: type,
+                    device_type: reqObj.device_type,
+                    device_token: reqObj.device_token,
+                    email_verify: true
+                };
+                await userDbHandler.updateUserDetailsById(checkEmail[0], updateObj);
+                let tokenData = {
+                    sub: checkEmail[0]._id,
+                    user_email: checkEmail[0].user_email,
+                    name: checkEmail[0].name
+                };
+                let token = _generateUserToken(tokenData);
+                let returnResponse = {
+                    user_id: checkEmail[0]._id,
+                    name: checkEmail[0].name,
+                    user_email: checkEmail[0].user_email,
+                    email_verify: checkEmail[0].user_email_verified,
+                    token: token
+                }
+                responseData.msg = `Welcome ${checkEmail[0].name} !!!`;
+                responseData.data = returnResponse;
+                return responseHelper.success(res, responseData);
+            }
+            let saveResponse = {
+                access_token: accessToken,
+                login_way: type,
+                device_type: reqObj.device_type,
+                device_token: reqObj.device_token,
+                name: reqObj.name,
+                user_email: reqObj.user_email,
+                email_verify: true
             };
+<<<<<<< HEAD
             let verificationInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
             if (!verificationInfo.length) {
                 responseData.msg = 'Invalid OTP';
@@ -414,27 +610,31 @@ module.exports = {
             //     return responseHelper.error(res, responseData);
             // }
             
+=======
+            let newUser = await userDbHandler.createUser(saveResponse);
+>>>>>>> 933bea01e803b80554a84c1aebf44d0ec361fc64
 
-            let encryptedPassword = await _encryptPassword(newPassword);
-            let updateUserQuery = {
-                user_password: encryptedPassword
+            let tokenData = {
+                sub: newUser._id,
+                user_email: newUser.user_email,
+                name: newUser.name
             };
-            let updatedUser = await userDbHandler.updateUserDetailsById(userId, updateUserQuery);
-            if (!updatedUser) {
-                log.error('failed to reset user password', updatedUser);
-                responseData.msg = 'failed to reset password';
-                return responseHelper.error(res, responseData);
+            let token = _generateUserToken(tokenData);
+            let returnResponse = {
+                user_id: newUser._id,
+                name: newUser.name,
+                user_email: newUser.user_email,
+                email_verify: newUser.user_email_verified,
+                token: token
             }
-            //delete the password token from db;
-            let removedTokenInfo = await _handleVerificationDataUpdate(passwordTokenInfo[0]._id);
-            log.info('password verification token has been removed::', removedTokenInfo);
-            responseData.msg = 'Password updated successfully! Please Login to continue';
+            responseData.msg = `Welcome ${newUser.name} !!!`;
+            responseData.data = returnResponse;
             return responseHelper.success(res, responseData);
         } catch (error) {
-            log.error('failed to reset password with error::', error);
-            responseData.msg = 'failed to reset password';
+            log.error('failed to get user social login with error::', error);
+            responseData.msg = 'failed to get user login';
             return responseHelper.error(res, responseData);
         }
     },
-    
+
 };

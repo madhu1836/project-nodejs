@@ -7,34 +7,44 @@ const config = require('../../../config/environments');
  * Creating User Schema Model
  */
 const datingProfileSchema = new Schema({
-    profile_image:{
+    pictures:{
+        type: [String],
+        default: [],
+    },  
+    age: {
+        type: Number,
+        default: '',
+    },
+    height: {
         type: String,
         default: '',
     },
-    name: {
-        type: String,
+    weight: {
+        type: Number,
         default: '',
     },
-    gender:{
+    looking_for:{
         type: String,
-        enum: ["","male","female"],
+        enum: ["male","female", "others"],
         default: ""
     },
-    bio:{
+    about:{
         type: String,
-        default: '',
+        default: ""
     },
-    profile_email: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    user_id:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref: 'Users',
-    }
-    
+    // address: {
+    //         city: { type: String, default: "" },
+    //         country: {type: String, default: ""},
+    //     },
+    // location: {
+    //     type: {
+    //         type: String,
+    //         enum: ['Point'], // 'location.type' must be 'Point'[lng,lat]
+    //         default: 'Point',
+    //     },
+    //     coordinates: { type: [], default: [0.0000, 0.0000] },
+    // },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
-
-module.exports = mongoose.model('Profile', datingProfileSchema);
+datingProfileSchema.index({ location: '2dsphere' });
+module.exports = mongoose.model('Dating Profile', datingProfileSchema);
 

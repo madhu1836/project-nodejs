@@ -13,7 +13,7 @@ module.exports = {
 		return templateBody; 
 	},
 	passwordReset: (data) => {
-		let templateBody = `<h2>Hey there,</h2><br>Click the link below to change your password!
+		let templateBody = `<h2>Hey ${data.name},</h2><br>Click the link below to change your password!
             <br><a style="text-decoration:none;line-height:100%;background:#7289DA;color:white;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:15px;font-weight:normal;text-transform:none;margin:0px;" target="_blank" href='${config.BaseUrl}/api/v1/reset/password/${data.token}'>Change Password</a>
             <br><p>This link will expire in 1 hour, so be sure to use it right away. Once you change your password, remember to log in again with your new password to continue using your account.
             If you did not make this request, please ignore this email.</p>
@@ -21,8 +21,19 @@ module.exports = {
             <br>Team Youth Social Service</br>`;
 		return templateBody;
 	},
+      emailForgetVerification: (data) => {
+            let templateBody = `<h5>Hey ${data.name},</h5>
+            <h4>Welcome to globalscholar,</h4>
+            <br>Click the link below to verify you email address!
+            <br><a style="text-decoration:none;line-height:100%;background:#7289DA;color:white;font-family:Ubuntu, Helvetica, Arial, sans-serif;font-size:15px;font-weight:normal;text-transform:none;margin:0px;" target="_blank" href='${config.BaseUrl}/api/v1/email/forget/verification?type=${data.type}&token=${data.token}'>Verify Your Email</a>
+            <br><p>This link will expire in 1 hour, so be sure to use it right away. Once you verify your email address, continue to log in.
+            If you did not make this request, please ignore this email.</p>
+            <br>Regards</br>
+            <br>Team globalscholar</br>`;
+		return templateBody; 
+	},
       otpVerification: (data) => {
-		let templateBody = `<h2>Hey there,</h2><br>Use the Otp below to verify yourself!!!
+		let templateBody = `<h2>Hey ${data.name},</h2><br>Use the Otp below to verify yourself!!!
             <br>Your OTP: ${data.otp}</br>
             <br><p>If you did not make this request, please ignore this email.</p></br>
             <br>Regards</br>

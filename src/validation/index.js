@@ -10,5 +10,9 @@ module.exports = {
 	datingProfileSchema: require('./schemas/datingProfile'),
 	moviesCategorySchema: require('./schemas/moviesCategory'),
 	moviesSchema: require('./schemas/Movies'),
-	searchMovieSchema: require('./schemas/searchMovie')
+	searchMovieSchema: require('./schemas/searchMovie'),
+	contactUsSchema: require('./schemas/contactUs'),
+	staticContent: require('./schemas/staticContent'),
+	userManagementSchema: require('./schemas/userManagement'),
+	friendsList: require('./schemas/friendsList'),
 };

@@ -1,5 +1,5 @@
 'use strict';
-const profileModel = require('../models/datingProfile');
+const profileModel = require('../models/user');
 let instance;
 /*********************************************
  * METHODS FOR HANDLING DATING PROFILE MODEL QUERIES
@@ -19,13 +19,13 @@ class Profile {
 	}
 	getProfileDetailsById(profile_id, projection) {
 		if (projection) {
-			return this._profileController.findOne({ _id: profile_id }, projection);
+			return this._profileController.findOne({ _id: profile_id }, projection).populate("user_id");
 		}
-		return this._profileController.findOne({ _id: profile_id });
+		return this._profileController.findOne({ _id: profile_id }).populate("user_id");
 	}
 	getProfileDetailsByQuery(query,projection = {}){
 		
-		return this._profileController.find(query, projection);
+		return this._profileController.find(query, projection).populate("user_id");
 	}   
 	updateProfileDetailsById(profile_id, updatedObj) {
 		return this._profileController.findByIdAndUpdate(profile_id, { $set : updatedObj });

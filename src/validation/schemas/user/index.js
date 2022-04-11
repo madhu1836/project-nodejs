@@ -16,6 +16,10 @@ module.exports = {
   changePassword: Joi.object().keys({
     old_password: Joi.string().required().label("Old Password"),
     new_password: Joi.string().required().label("New Password"),
+    confirm_password: Joi.string()
+             .valid(Joi.ref('new_password'))
+             .required()
+             .error(new Error('Confirm password and user password must be same')),
   }),
   
 };

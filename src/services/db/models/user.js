@@ -7,10 +7,71 @@ const config = require('../../../config/environments');
  * Creating User Schema Model
  */
 const userSchema = new Schema({
+    pictures:{
+        type: [String],
+        default: [],
+    },
+    age: {
+        type: Number,
+        default: '',
+    },
+    height: {
+        type: String,
+        default: '',
+    },
+    weight: {
+        type: Number,
+        default: '',
+    },
+    looking_for:{
+        type: String,
+        enum: ["Men","Women", "Others"],
+    },
+    about:{
+        type: String,
+        default: ""
+    },
+    profile_picture: {
+        type: String,
+        default: '',
+    },
     name: {
         type: String,
         trim: true,
     },
+    user_email: {
+        type: String,
+        trim: true,
+    },
+    user_password: {
+        type: String,
+        default: '',
+        trim: true,
+    },
+    phone_number: {
+        type: String,
+        trim: true,
+    },
+    gender: {
+        type: String,
+        enum: ['Male', 'Female', 'Others']
+    },
+    user_otp_verified: {
+        type: Boolean,
+        default: false,
+    },
+    resetPassword_verified: {
+        type: Boolean,
+        default: false,
+    },
+    // user_email_verified: {
+    //     type: Boolean,
+    //     default: false,
+    // },
+    // user_phone_verified: {
+    //     type: Boolean,
+    //     default: false,
+    // },
     device_token: {
         type: String,
         default: ''
@@ -24,36 +85,22 @@ const userSchema = new Schema({
         type: String,
         default: ''
     },
-    user_email: {
-        type: String,
-        required: true,
-        trim: true,
-    },
-    user_password: {
-        type: String,
-        default: '',
-        trim: true,
-    },
-    user_email_verified: {
-        type: Boolean,
-        default: false,
-    },
-    phone_number: {
-        type: String,
-        trim: true,
-    },
-    user_phone_verified: {
-        type: Boolean,
-        default: false,
-    },
     login_way: {
         type: String,
         enum: ['local', 'facebook', 'google', 'apple'],
         default: 'local',
     },
-    profile_picture: {
+    address: {
         type: String,
-        default: '',
+        default:''
+    },
+    loc: {
+        type: {
+            type: String,
+            enum: ['Point'], // 'location.type' must be 'Point'[lng,lat]
+            default: 'Point',
+        },
+        coordinates: { type: [], default: [0.0000, 0.0000] },
     },
     // user_bio: {
     //     type: String,

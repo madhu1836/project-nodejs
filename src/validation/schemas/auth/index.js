@@ -16,14 +16,27 @@ module.exports = {
              .valid(Joi.ref('user_password'))
              .required()
              .error(new Error('Confirm password and user password must be same')),
+        gender: Joi.string().required().label("Gender")
+    }),
+    verifyOtp: Joi.object().keys({
+        otp: Joi.string().min(4).max(4).required().label('OTP'),
+    }),
+    forgotPassworEmail: Joi.object().keys({
+        user_email: Joi.string().email().required().label('Email'),
+    }),
+    resetPassword: Joi.object().keys({
+        new_password: Joi.string().min(6).required().label('New Password'), 
+        confirm_password: Joi.string()
+            .valid(Joi.ref('new_password'))
+            .required()
+            .error(new Error('Confirm password and password must be same')),
     }),
     socialLogin: Joi.object().keys({
         type: Joi.string().valid('google', 'facebook', 'apple').required().label('type'),
         access_token: Joi.string().required().label('token'),
         device_type: Joi.string().required().label('Device Type'),
         device_token: Joi.string().required().label('Device Token'),
-        first_name: Joi.string().allow("").optional().label('First Name'),
-        last_name: Joi.string().allow("").optional().label('Last Name'),
+        name: Joi.string().allow("").optional().label('Name'),
         user_email: Joi.string().allow("").optional().label('User Email')
     }),
     forgotPassword: Joi.object().keys({
@@ -71,4 +84,5 @@ module.exports = {
         zip_code: Joi.string().required().label('zip_code'),
         who_am_i: Joi.string().required().label('who_am_i'),
     }),
+
 };
