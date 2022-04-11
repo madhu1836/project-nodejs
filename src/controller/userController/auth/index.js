@@ -357,7 +357,7 @@ module.exports = {
             };
             let verificationInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
             if (!verificationInfo.length) {
-                responseData.msg = 'Invalid email verification request or token expired or wrong otp';
+                responseData.msg = 'Invalid OTP';
                 return responseHelper.error(res, responseData);
             }
             //update user email verification status

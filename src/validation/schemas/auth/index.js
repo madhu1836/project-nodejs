@@ -44,7 +44,7 @@ module.exports = {
         confirm_password: Joi.string()
             .valid(Joi.ref('new_password'))
             .required()
-            .error(new Error('Confirm password and password must be same')),
+            .error(new Error('Create Password and Confirm Password must be same')),
     }),
     verifyEmail: Joi.object().keys({
         token: Joi.string().required().label('token'),
