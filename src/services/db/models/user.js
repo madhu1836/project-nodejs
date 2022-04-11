@@ -54,7 +54,8 @@ const userSchema = new Schema({
     },
     gender: {
         type: String,
-        enum: ['Male', 'Female', 'Others']
+        enum: ['Male', 'Female', 'Others'],
+        default:''
     },
     user_otp_verified: {
         type: Boolean,

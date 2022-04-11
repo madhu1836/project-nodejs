@@ -12,7 +12,6 @@ const config = require('../../../config/environments');
 
 module.exports={
     create: async (req, res) => {
-<<<<<<< HEAD
         let id = req.user.sub;
         let responseData = {};
         let reqObj = req.body;
@@ -28,14 +27,6 @@ module.exports={
                 message: reqObj.message,
                 name: userData.name,
                 user_email: userData.user_email,
-=======
-        let responseData = {};
-        let reqObj = req.body;
-        try {
-            
-            let Data = {
-                message: reqObj.message
->>>>>>> 933bea01e803b80554a84c1aebf44d0ec361fc64
             }
             let newProfile = await DbHandler.create(Data);
             responseData.msg = "message Sent successfully!!!";

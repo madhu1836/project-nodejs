@@ -31,13 +31,8 @@ module.exports = {
                 receiver_id: reqObj.receiver_id,
                 // status: reqObj.status
             }
-<<<<<<< HEAD
             // console.log("==========>",submitData);
             // console.log(submitData);
-=======
-            console.log("==========>",submitData);
-            console.log(submitData);
->>>>>>> 933bea01e803b80554a84c1aebf44d0ec361fc64
             let newDetails = await DbHandler.create(submitData);
             log.info('created in the database collection',newDetails);
             responseData.msg = `${moduleName} created in the database collection!!!`;
@@ -54,7 +49,6 @@ module.exports = {
         let reqObj = req.body;
         log.info('Recieved request for Reject Profile:', reqObj);
         let responseData = {};
-<<<<<<< HEAD
         // console.log(reqObj);
         try {
             let query = {
@@ -62,10 +56,6 @@ module.exports = {
                 receiver_id:reqObj.receiver_id,
                 status:2
             }
-=======
-        console.log(reqObj);
-        try {
->>>>>>> 933bea01e803b80554a84c1aebf44d0ec361fc64
             // let thename = '^'+reqObj.name+'$';
             let checkDetails = await DbHandler.getByQuery({$and:[{receiver_id: reqObj.sender_id}, {sender_id: reqObj.receiver_id}]});
             if (checkDetails.length) {
@@ -73,7 +63,6 @@ module.exports = {
                 responseData.msg = 'Profile Rejected!!!';
                 return responseHelper.error(res, responseData);
             }
-<<<<<<< HEAD
             let checkDetailsData = await DbHandler.getByQuery(query);
             if (checkDetailsData.length) {
                 responseData.msg = 'Rejectd Profile Already Exist!!!';
@@ -83,8 +72,6 @@ module.exports = {
             responseData.msg = 'Request rejected !!!';
             responseData.data = createRejectedData;
             return responseHelper.success(res,responseData);
-=======
->>>>>>> 933bea01e803b80554a84c1aebf44d0ec361fc64
         } catch (error) {
             log.error('failed to fetch with error::', error);
             responseData.msg = 'failed to Fetch Data';
@@ -92,19 +79,12 @@ module.exports = {
         }
     },
     getAll: async (req, res) => {
-<<<<<<< HEAD
         let reqObj= req.body;
-=======
->>>>>>> 933bea01e803b80554a84c1aebf44d0ec361fc64
         let responseData = {};
         try {
             let getList = await DbHandler.getByQuery({});
             if (!getList.length) {
-<<<<<<< HEAD
                 responseData.msg = `No such ${moduleName} exist!!!`;
-=======
-                responseData.msg = `No Such ${moduleName} exists`;
->>>>>>> 933bea01e803b80554a84c1aebf44d0ec361fc64
                 return responseHelper.error(res, responseData);
             }
             responseData.msg = `All ${moduleName} fetch successfully!!!`;

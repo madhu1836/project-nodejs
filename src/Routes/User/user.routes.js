@@ -140,7 +140,7 @@ module.exports = () => {
     * Routes for handling Dating profile 
     */
     // Router.post('/user/dating/createProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(userDatingValidationSchema.create_profile, 'body')], userDatingController.createDatingProfile);
-    Router.put('/user/dating/updateProfile/:id',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(userDatingValidationSchema.update_profile, 'body')], userDatingController.updateDatingProfile);
+    Router.put('/user/dating/updateProfile',[multerService.uploadFile('file').fields([{name:'pictures',max:2}]), validationMiddleware(userDatingValidationSchema.update_profile, 'body')], userDatingController.updateDatingProfile);
     Router.post('/user/dating/get-all-profiles-by-filter', userDatingController.getAllProfiles);
     Router.get('/user/get-all-dating-profiles', userDatingController.getAllDatingProfiles);
     Router.get('/user/dating/get-profile/:id', userDatingController.getSingleProfileById);

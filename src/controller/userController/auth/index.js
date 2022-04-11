@@ -550,7 +550,6 @@ resetPassword: async(req, res) => {
                 user_email: reqObj.user_email,
                 email_verify: true
             };
-<<<<<<< HEAD
             let verificationInfo = await verificationDbHandler.getVerificationDetailsByQuery(query);
             if (!verificationInfo.length) {
                 responseData.msg = 'Invalid OTP';
@@ -610,9 +609,6 @@ resetPassword: async(req, res) => {
             //     return responseHelper.error(res, responseData);
             // }
             
-=======
-            let newUser = await userDbHandler.createUser(saveResponse);
->>>>>>> 933bea01e803b80554a84c1aebf44d0ec361fc64
 
             let tokenData = {
                 sub: newUser._id,
