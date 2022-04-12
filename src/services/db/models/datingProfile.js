@@ -25,7 +25,6 @@ const datingProfileSchema = new Schema({
     },
     looking_for:{
         type: String,
-        enum: ["male","female", "others"],
         default: ""
     },
     about:{

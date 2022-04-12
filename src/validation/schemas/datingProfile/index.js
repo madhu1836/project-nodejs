@@ -48,7 +48,6 @@ module.exports = {
         looking_for: Joi
             .string()
             .required()
-            .valid("Men", "Women", "Others")
             .label('Looking For'), 
         about: Joi.string().required().label("About"),
 	}),
