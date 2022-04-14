@@ -57,19 +57,33 @@ module.exports={
         let id = user.sub;
         let reqObj = req.body;
         try {
-            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsByQuery({user_id: { $ne: id}});
+            let getProfileDetailsByQuery = await datingDbHandler.getProfileDetailsById(id);
             if (!getProfileDetailsByQuery) {
                 responseData.msg = "Dating profile does not exist";
                 return responseHelper.error(res, responseData);
             }
-            let oldphotos = getProfileDetailsByQuery.pictures;
-            oldphotos = [];
+            // console.log('=====profile',getProfileDetailsByQuery)
+            // let checkDetails = await datingDbHandler.getProfileDetailsByQuery({$and:[{age: reqObj.age}, {height: reqObj.height}, {weight: reqObj.weight}]});
+            if (getProfileDetailsByQuery.age || getProfileDetailsByQuery.height || getProfileDetailsByQuery.weight) {
+                 let updatedData = await datingDbHandler.updateProfileDetailsById({_id:getProfileDetailsByQuery._id},{profile_created:1})
+            }
             let filelocation = [];
+            // console.log('======length',getProfileDetailsByQuery[0].pictures.length)
+            // for (let i = 0; i < getProfileDetailsByQuery[0].pictures.length; i++){
+            //     console.log('========>',getProfileDetailsByQuery[0].pictures[i])
+            //     filelocation.push(getProfileDetailsByQuery[0].pictures[i])
+            // }
+            // filelocation = getProfileDetailsByQuery[0].pictures;
+            // oldphotos = [];
+            // let filelocation = [];
             if (req.files && req.files.pictures) {
+                // filelocation = []
                 for (let i = 0; i < req.files.pictures.length; i++) {
                     filelocation.push(req.files.pictures[i].location);
                 }
+                reqObj.pictures = filelocation;
             }
+            
             // let fileLocation = '';
             // if (req.file) {
             //     fileLocation = req.file.location;
@@ -85,7 +99,7 @@ module.exports={
             //     looking_for: reqObj.looking_for,
             //     about: reqObj.about,
             // }
-            let updatingData = await datingDbHandler.updateProfileDetailsById(id,reqObj,);
+            let updatingData = await datingDbHandler.updateProfileDetailsById(id,reqObj);
             responseData.msg = "Dating profile updated successfully!!!";
             return responseHelper.success(res, responseData);
         } catch (error) {
