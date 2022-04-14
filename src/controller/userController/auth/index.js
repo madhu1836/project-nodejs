@@ -88,31 +88,50 @@ module.exports = {
                 responseData.msg = "Invalid Credentials!!!";
                 return responseHelper.error(res, responseData);
             }
-        
-            let checkPassword = await _comparePassword(reqObj.user_password, getUser[0].user_password);
+            let userData;
+            console.log('======>',getUser[0])
+          if (getUser[0].age || getUser[0].height || getUser[0].weight){
+            userData = await userDbHandler.updateUserDetailsById({_id:getUser[0]._id},{profile_created:1})
+          }
+          else {
+            userData = await userDbHandler.updateUserDetailsById({_id:getUser[0]._id},{profile_created:0})
+          }
+            // let checkProfileDetails = await userDbHandler.getUserDetailsByQuery({$and:[{age: reqObj.age}, {height: reqObj.height}]});
+            // if (checkProfileDetails.length) {
+            //     let updateData = await userDbHandler.updateUserDetailsById({_id:checkProfileDetails[0]._id},{profile_created:1})
+            // }
+            
+            // let checkDetails = await userDbHandler.getUserDetailsByQuery({$and:[{age: reqObj.age}, {height: reqObj.height}, {weight: reqObj.weight}]});
+            // if (!checkDetails.length) {
+            //     let updateData = await userDbHandler.updateUserDetailsById({_id:checkDetails[0]._id},{profile_created:0})
+            // }
+
+          console.log('=====reqObj',userData)
+            let checkPassword = await _comparePassword(reqObj.user_password, userData.user_password);
             if (!checkPassword) {
                 responseData.msg = "Invalid Credentials!!!";
                 return responseHelper.error(res, responseData);
             }
-            if (!getUser[0].user_otp_verified){
+            if (!userData.user_otp_verified){
                 responseData.msg = "Please verify your account!!!";
                 return responseHelper.error(res, responseData);
             }
             
             let tokenData = {
-                sub: getUser[0]._id,
-                user_email: getUser[0].user_email,
+                sub: userData._id,
+                user_email: userData.user_email,
             };
             let token = _generateUserToken(tokenData);
             let returnResponse = {
-                user_id: getUser[0]._id,
-                name: getUser[0].name,
-                user_email: getUser[0].user_email,
-                user_otp_verified: getUser[0].user_otp_verified,
-                gender: getUser[0].gender,
-                token: token
+                user_id: userData._id,
+                name: userData.name,
+                user_email: userData.user_email,
+                user_otp_verified: userData.user_otp_verified,
+                gender: userData.gender,
+                token: token,
+                profile_created: userData.profile_created,
             }
-            responseData.msg = `Welcome ${getUser[0].name} !!!`;
+            responseData.msg = `Welcome ${userData.name} !!!`;
             responseData.data = returnResponse;
             return responseHelper.success(res, responseData);
 

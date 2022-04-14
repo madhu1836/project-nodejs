@@ -77,15 +77,15 @@ module.exports={
             // if(req.files && req.files.fileLocation){
             //     reqObj.fileLocation = req.files.fileLocation[0].location
             // }
-            let updateData = {
-                pictures: filelocation,
-                age: reqObj.age,
-                height: reqObj.height,
-                weight: reqObj.weight,
-                looking_for: reqObj.looking_for,
-                about: reqObj.about,
-            }
-            let updatingData = await datingDbHandler.updateProfileDetailsById(id,updateData,);
+            // let updateData = {
+            //     pictures: filelocation,
+            //     age: reqObj.age,
+            //     height: reqObj.height,
+            //     weight: reqObj.weight,
+            //     looking_for: reqObj.looking_for,
+            //     about: reqObj.about,
+            // }
+            let updatingData = await datingDbHandler.updateProfileDetailsById(id,reqObj,);
             responseData.msg = "Dating profile updated successfully!!!";
             return responseHelper.success(res, responseData);
         } catch (error) {

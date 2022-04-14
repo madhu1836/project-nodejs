@@ -11,6 +11,11 @@ const userSchema = new Schema({
         type: [String],
         default: [],
     },
+    profile_created: {
+        type: String,
+        enum: ["0","1"],
+        default: '0',
+    },
     age: {
         type: Number,
         default: '',
