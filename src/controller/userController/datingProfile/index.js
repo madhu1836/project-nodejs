@@ -64,7 +64,7 @@ module.exports={
             }
             // console.log('=====profile',getProfileDetailsByQuery)
             // let checkDetails = await datingDbHandler.getProfileDetailsByQuery({$and:[{age: reqObj.age}, {height: reqObj.height}, {weight: reqObj.weight}]});
-            if (getProfileDetailsByQuery.age || getProfileDetailsByQuery.height || getProfileDetailsByQuery.weight) {
+            if (getProfileDetailsByQuery.profile_created==='0') {
                  let updatedData = await datingDbHandler.updateProfileDetailsById({_id:getProfileDetailsByQuery._id},{profile_created:1})
             }
             let filelocation = [];
@@ -100,6 +100,9 @@ module.exports={
             //     about: reqObj.about,
             // }
             let updatingData = await datingDbHandler.updateProfileDetailsById(id,reqObj);
+        //     if (getProfileDetailsByQuery.age || getProfileDetailsByQuery.height || getProfileDetailsByQuery.weight) {
+        //         let updatedData = await datingDbHandler.updateProfileDetailsById({_id:getProfileDetailsByQuery._id},{profile_created:1})
+        //    }
             responseData.msg = "Dating profile updated successfully!!!";
             return responseHelper.success(res, responseData);
         } catch (error) {
