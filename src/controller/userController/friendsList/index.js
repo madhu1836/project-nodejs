@@ -17,9 +17,10 @@ module.exports = {
             // let thename = '^'+reqObj.name+'$';
             let checkDetails = await DbHandler.getByQuery({$and:[{receiver_id: reqObj.sender_id}, {sender_id: reqObj.receiver_id}]});
             if (checkDetails.length) {
-                let updateData = await DbHandler.updateById({_id:checkDetails[0]._id},{status:1})
+                let updateData = await DbHandler.updateById({_id:checkDetails[0]._id},{status:1});
                 responseData.msg = 'Status Updated!!!';
-                return responseHelper.error(res, responseData);
+                responseData.data = checkDetails;
+                return responseHelper.success(res, responseData);
             }
             let checkDetailsData = await DbHandler.getByQuery({$and:[{sender_id: reqObj.sender_id},{receiver_id: reqObj.receiver_id}]});
             if (checkDetailsData.length) {
