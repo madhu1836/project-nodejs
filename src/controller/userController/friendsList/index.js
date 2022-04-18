@@ -18,8 +18,9 @@ module.exports = {
             let checkDetails = await DbHandler.getByQuery({$and:[{receiver_id: reqObj.sender_id}, {sender_id: reqObj.receiver_id}]});
             if (checkDetails.length) {
                 let updateData = await DbHandler.updateById({_id:checkDetails[0]._id},{status:1});
+                let updatedDetails = await DbHandler.getByQuery({$and:[{receiver_id: reqObj.sender_id}, {sender_id: reqObj.receiver_id}]});
                 responseData.msg = 'Status Updated!!!';
-                responseData.data = checkDetails;
+                responseData.data = updatedDetails;
                 return responseHelper.success(res, responseData);
             }
             let checkDetailsData = await DbHandler.getByQuery({$and:[{sender_id: reqObj.sender_id},{receiver_id: reqObj.receiver_id}]});
@@ -35,8 +36,10 @@ module.exports = {
             // console.log("==========>",submitData);
             // console.log(submitData);
             let newDetails = await DbHandler.create(submitData);
+            checkDetails = await DbHandler.getByQuery({$and:[{receiver_id: reqObj.receiver_id}, {sender_id: reqObj.sender_id}]});
             log.info('created in the database collection',newDetails);
             responseData.msg = `${moduleName} created in the database collection!!!`;
+            responseData.data = checkDetails;
             return responseHelper.success(res, responseData);
             
         } catch (error) {
