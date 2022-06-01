@@ -85,14 +85,34 @@ module.exports = {
     getAll: async (req, res) => {
         let reqObj= req.body;
         let responseData = {};
+        let userId =req.user.sub
         try {
-            let getList = await DbHandler.getByQuery({});
+            let getList = await DbHandler.getByQuery({$and:[{$or:[{receiver_id: userId},{sender_id:userId}]},{status:1}]});
             if (!getList.length) {
                 responseData.msg = `No such ${moduleName} exist!!!`;
                 return responseHelper.error(res, responseData);
             }
             responseData.msg = `All ${moduleName} fetch successfully!!!`;
-            responseData.data = getList;
+            responseData.data = getList.reverse();
+            return responseHelper.success(res, responseData);
+        } catch (error) {
+            log.error('failed to fetch data with error::', error);
+            responseData.msg = 'failed to fetch data';
+            return responseHelper.error(res, responseData);
+        }
+    },
+    getNotificationRequest: async (req, res) => {
+        let reqObj= req.body;
+        let responseData = {};
+        let userId =req.user.sub
+        try {
+            let getList = await DbHandler.getByQuery({$and:[{receiver_id: userId},{status:0}]});
+            if (!getList.length) {
+                responseData.msg = `No such ${moduleName} exist!!!`;
+                return responseHelper.error(res, responseData);
+            }
+            responseData.msg = `All ${moduleName} fetch successfully!!!`;
+            responseData.data = getList.reverse();
             return responseHelper.success(res, responseData);
         } catch (error) {
             log.error('failed to fetch data with error::', error);

@@ -158,6 +158,7 @@ module.exports = () => {
     Router.post('/user/add-to-friends-list', validationMiddleware(friendsListValidationSchema.add), friendsListController.add);
     Router.post('/user/rejected-profile',friendsListController.rejectProfile);
     Router.get('/user/get-all-friends-list',friendsListController.getAll);
+    Router.get('/user/get-notification',friendsListController.getNotificationRequest);
     Router.get('/user/get-friends-list/:id', friendsListController.getById);
     Router.delete('/user/delete-friend-list/:id', friendsListController.delete);
 
