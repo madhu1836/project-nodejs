@@ -168,6 +168,42 @@ module.exports = {
             responseData.msg = 'failed to update data';
             return responseHelper.error(res, responseData);
         }
-    }
+    },
+
+    /****
+     * Update Location
+    ******/
+    updateLocation: async(req, res) => {
+        let reqObj = req.body; 
+        let user = req.user;
+        let id = user.sub;
+        log.info('Recieved request for Update Location:', reqObj);
+        let responseData = {};
+        try {
+            let userData = await userDbHandler.getUserDetailsById(id);
+            if (!userData) {
+                responseData.msg = 'Invalid user!!!';
+                return responseHelper.error(res, responseData);
+            }
+
+            let coords = [+reqObj.longitude, +reqObj.latitude];
+            let updatedObj = {
+                address: reqObj.address,
+                loc: {
+					type: 'Point',
+					coordinates: coords,
+				},
+            }
+            
+            let updateProfile = await userDbHandler.updateUserDetailsById(id, updatedObj);
+            responseData.msg = `Data updated sucessfully !!!`;
+            return responseHelper.success(res, responseData);
+
+        } catch (error) {
+            log.error('failed to get user signup with error::', error);
+            responseData.msg = 'failed to get user login';
+            return responseHelper.error(res, responseData);
+        }
+    },
 
 };

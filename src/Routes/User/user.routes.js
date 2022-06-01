@@ -136,6 +136,11 @@ module.exports = () => {
     Router.get('/user/profile', userInfoController.profile);
     Router.put('/user/update_profile', [multerService.uploadFile('file').single('profile_picture'), validationMiddleware(userInfoValidationSchema.updateProfile, 'body')], userInfoController.updateProfile);
 
+
+    /***Routes to Handle Update Location */
+    Router.put('/user/update_location',validationMiddleware(userInfoValidationSchema.updateLocation, 'body'), userInfoController.updateLocation);
+
+
     /**
     * Routes for handling Dating profile 
     */

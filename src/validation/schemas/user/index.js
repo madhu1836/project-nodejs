@@ -21,5 +21,11 @@ module.exports = {
              .required()
              .error(new Error('Confirm password and user password must be same')),
   }),
+
+  updateLocation: Joi.object().keys({
+    address: Joi.string().required().label('Address'),
+    latitude: Joi.string().label('Latitude'),
+    longitude: Joi.string().label('Longitude')
+  }),
   
 };
