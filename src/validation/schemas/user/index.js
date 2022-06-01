@@ -23,7 +23,7 @@ module.exports = {
   }),
 
   updateLocation: Joi.object().keys({
-    address: Joi.string().required().label('Address'),
+    // address: Joi.string().required().label('Address'),
     latitude: Joi.string().label('Latitude'),
     longitude: Joi.string().label('Longitude')
   }),

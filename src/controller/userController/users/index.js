@@ -188,7 +188,7 @@ module.exports = {
 
             let coords = [+reqObj.longitude, +reqObj.latitude];
             let updatedObj = {
-                address: reqObj.address,
+                // address: reqObj.address,
                 loc: {
 					type: 'Point',
 					coordinates: coords,
