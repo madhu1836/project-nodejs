@@ -8,7 +8,7 @@ module.exports = {
 
     jwtTokenInfo: {
         secretKey: '9889D22341540031D3386132A7BDD38F4830474543C795D019561C0A308F502B',
-        issuer: 'Tourist',
+        issuer: 'Sample Project',
         audience: 'localhost:8800',
         algorithm: 'HS256',
         expiresIn: '2h'
