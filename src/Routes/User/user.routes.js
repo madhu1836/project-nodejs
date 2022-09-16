@@ -58,7 +58,7 @@ module.exports = () => {
   Router.use('/', userAuthenticated);
 
   Router.put('/update-profile', userAuthController.updateProfile);
-  Router.get('/get-profile/:id', userAuthController.getProfileById);
+  Router.get('/get-profile', userAuthController.getProfileById);
 
 
 
