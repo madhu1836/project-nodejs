@@ -6,28 +6,28 @@ const config = require('../../../config/environments');
 /**
  * Creating User Schema Model
  */
-const moviesSchema = new Schema({
-    movie_thumbnail: {
-        type: String,
-        default: '',
-    },
-    movie_link: {
-        type: String,
-        default: '',
-    },
-    moviesCategory_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'MoviesCategory'
-    },
-    movie_name: {
-        type: String,
-        default: ''
-    },
-    description: {
-        type: String,
-        default: '',
-    },
+const detailsSchema = new Schema({
 
+    father_name: {
+        type: String,
+        trim: true,
+    },
+    mother_name: {
+        type: String,
+        trim: true,
+    },
+    wife: {
+        type: String,
+        trim: true,
+    },
+    no_of_children: {
+        type: Number,
+        trim: true,
+    },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Users'
+    }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
-module.exports = mongoose.model('Movies', moviesSchema);
+module.exports = mongoose.model('Family Details', detailsSchema);

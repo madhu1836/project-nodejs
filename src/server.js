@@ -93,7 +93,7 @@ class Server {
             })
             .then(() => {
                 return new Promise((resolve, reject) => {
-                    this._server.listen(7000, (err) => {
+                    this._server.listen(8800, (err) => {
                         if (err) {
                             reject(err);
                         } else {
